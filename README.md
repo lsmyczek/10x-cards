@@ -1,82 +1,76 @@
-# 10x Cards on Astro
+# 10x-cards
 
-Certification project - 10xDev course
+## Table of Contents
+
+- [Project Description](#project-description)
+- [Tech Stack](#tech-stack)
+- [Getting Started Locally](#getting-started-locally)
+- [Available Scripts](#available-scripts)
+- [Project Scope](#project-scope)
+- [Project Status](#project-status)
+- [License](#license)
+
+## Project Description
+
+10x-cards is a web application designed to facilitate the fast creation, management, and review of educational flashcards. It leverages large language models (LLMs) to automatically generate flashcard suggestions from user-provided text, streamlining the learning process. Users can review, edit, and manage flashcards manually, ensuring a personalized learning experience integrated with spaced repetition algorithms for effective study sessions.
 
 ## Tech Stack
 
-- [Astro](https://astro.build/) v5.5.5 - Modern web framework for building fast, content-focused websites
-- [React](https://react.dev/) v19.0.0 - UI library for building interactive components
-- [TypeScript](https://www.typescriptlang.org/) v5 - Type-safe JavaScript
-- [Tailwind CSS](https://tailwindcss.com/) v4.0.17 - Utility-first CSS framework
+- **Frontend**: Astro 5, React 19, TypeScript 5, Tailwind CSS 4, Shadcn/ui
+- **Backend**: Supabase (PostgreSQL, authentication, scalable data storage)
+- **AI Integration**: Openrouter.ai (support for multiple LLM models including OpenAI, Anthropic, and Google)
+- **CI/CD & Hosting**: GitHub Actions, DigitalOcean (Docker-based deployment)
 
-## Prerequisites
+## Getting Started Locally
 
-- Node.js v22.14.0 (as specified in `.nvmrc`)
-- npm (comes with Node.js)
+1. **Clone the repository**:
+   ```sh
+   git clone https://github.com/lsmyczek/10x-cards.git
+   cd 10x-cards
+   ```
 
-## Getting Started
+2. **Set the Node version** (as specified in `.nvmrc`). Current version **22.14.0**:
+   ```sh
+   nvm use
+   ```
 
-1. Clone the repository:
+3. **Install dependencies**:
+   ```sh
+   npm install
+   ```
 
-```bash
-git clone https://github.com/lsmyczek/10x-cards.git
-cd 10x-cards
-```
+4. **Start the development server**:
+   ```sh
+   npm run dev
+   ```
 
-2. Install dependencies:
-
-```bash
-npm install
-```
-
-3. Run the development server:
-
-```bash
-npm run dev
-```
-
-4. Build for production:
-
-```bash
-npm run build
-```
+5. **Access the app**:
+   Open your browser and navigate to `http://localhost:3000` (or the default address provided by Astro).
 
 ## Available Scripts
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
-- `npm run lint:fix` - Fix ESLint issues
+- **npm run dev**: Starts the development server.
+- **npm run build**: Builds the project for production.
+- **npm run preview**: Serves the production build locally.
+- **npm run astro**: Runs Astro CLI commands.
+- **npm run lint**: Lints the codebase.
+- **npm run lint:fix**: Automatically fixes linting issues.
+- **npm run format**: Formats the code using Prettier.
 
-## Project Structure
+## Project Scope
 
-```md
-.
-├── src/
-│   ├── layouts/    # Astro layouts
-│   ├── pages/      # Astro pages
-│   │   └── api/    # API endpoints
-│   ├── components/ # UI components (Astro & React)
-│   └── assets/     # Static assets
-├── public/         # Public assets
-```
+The project focuses on the following key areas:
 
-## AI Development Support
+- **Automated Flashcard Generation**: Users can input text to generate flashcard suggestions using LLMs.
+- **Manual Flashcard Management**: Create, edit, and delete flashcards to suit personal study needs.
+- **User Authentication**: Secure registration, login, and account management.
+- **Spaced Repetition**: Integration with spaced repetition algorithms to optimize the learning process.
+- **Statistics Tracking**: Monitoring the generation and approval rate of AI-generated flashcards.
 
-This project is configured with AI development tools to enhance the development experience, providing guidelines for:
+## Project Status
 
-- Project structure
-- Coding practices
-- Frontend development
-- Styling with Tailwind
-- Accessibility best practices
-- Astro and React guidelines
-
-### Cursor IDE
-
-The project includes AI rules in `.cursor/rules/` directory that help Cursor IDE understand the project structure and provide better code suggestions.
+This is an early-stage MVP of the 10x-cards project, currently under active development.
 
 ## License
 
-MIT
+This project is licensed under the MIT License. 
