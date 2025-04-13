@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { z } from 'zod';
-import type { CreateGenerationCommand, GenerationDto } from '../../types';
+import type { CreateGenerationCommand } from '../../types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { GenerationService, GenerationError } from '../../lib/services/generation.service';
 import { DEFAULT_USER_ID } from '../../db/supabase.client';
