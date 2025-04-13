@@ -1,0 +1,33 @@
+<conversation_summary>
+<decisions>
+Encja "user" jest zarządzana przez Supabase z kolumnami: id, email, created_at, encrypted_password oraz confirmed_at.
+Tabela "flashcards" będzie przechowywać fiszki tworzone ręcznie oraz generowane przez AI, rozróżniane przez kolumnę "source" przyjmującą wartości "ai-full", "ai-edited" oraz "manual", z ograniczeniem długości: front do 200 znaków, back do 500 znaków.
+Relacja między użytkownikiem a fiszkami jest ustalona jako 1:N (jeden użytkownik ma wiele fiszek).
+Operacje generowania fiszek będą rejestrowane w dwóch osobnych encjach:
+"generations" zawiera: id (bigserial), user_id (klucz obcy), model, generated_count, accepted_unedited_count, accepted_edited_count, source_text_hash oraz source_text_length (z ograniczeniem długości od 1000 do 10000 znaków).
+"generations_error_logs" zawiera: id (bigserial), user_id (klucz obcy), model, source_text_hash, source_text_length (z ograniczeniem długości od 1000 do 10000 znaków), error_code oraz error_message.
+Wdrożone zostaną mechanizmy RLS (Row-Level Security) oparte na kolumnie user_id, co pozwoli autoryzować dostęp do danych za pomocą Supabase Auth.
+Dla MVP, identyfikatory dla tabel generacji będą definiowane jako bigserial, natomiast dla tabeli "flashcards" użyjemy serial.
+Sesje nauki zostały wyłączone na tym etapie i zostaną rozważone w przyszłych iteracjach.
+</decisions>
+<matched_recommendations>
+Utworzenie uproszczonego schematu bazy danych z użytkownikami zarządzanymi przez Supabase.
+Stworzenie tabeli "flashcards" z ograniczeniami długości tekstu oraz check constraint dla kolumny "source".
+Podział logowania operacji generowania fiszek na dwie osobne tabele: "generations" oraz "generations_error_logs" z odpowiednimi ograniczeniami długości.
+Zaprojektowanie relacji 1:N między użytkownikami a fiszkami oraz między użytkownikami a logami generacji.
+Wdrożenie polityk RLS oparte na user_id dla ochrony danych użytkowników.
+Wykorzystanie typu bigserial dla identyfikatorów w tabelach generacji, co odpowiada wymaganiom MVP.
+</matched_recommendations>
+<database_planning_summary>
+Główne wymagania dotyczące schematu bazy danych obejmują:
+Wykorzystanie tabeli użytkowników kontrolowanej przez Supabase zawierającej id, email, created_at, encrypted_password oraz confirmed_at.
+Stworzenie tabeli "flashcards" przechowującej fiszki zarówno generowane przez AI, jak i tworzone ręcznie, z kluczowymi ograniczeniami na długość pól (front do 200 znaków, back do 500 znaków) oraz check constraint dla kolumny "source".
+Rejestrację operacji generowania fiszek poprzez dwie osobne encje: "generations" (z polami dotyczącymi modelu, liczby wygenerowanych i zaakceptowanych fiszek oraz metrykami źródłowego tekstu) oraz "generations_error_logs" (przechowującą informacje o błędach podczas generowania).
+Relacje między encjami są ustalone jako 1:N, gdzie jeden użytkownik może posiadać wiele fiszek oraz wiele wpisów logów.
+Wdrożenie RLS zapewniające, że użytkownicy mają dostęp wyłącznie do swoich danych, co integruje się z autoryzacją opartą na Supabase Auth.
+Zastosowanie typu serial dla identyfikatorów fiszek oraz bigserial dla tabel generacji, co jest odpowiednie dla fazy MVP przy oczekiwanym niskim ruchu.
+</database_planning_summary>
+<unresolved_issues>
+Obecnie nie ma nierozwiązanych kwestii – wszystkie główne decyzje i wymagania zostały określone na etapie MVP.
+</unresolved_issues>
+</conversation_summary>
