@@ -4,7 +4,7 @@ import { createHash } from '../utils/hash';
 
 // Rate limiting configuration
 const RATE_LIMIT = {
-  MAX_REQUESTS: 10,
+  MAX_REQUESTS: 200,
   WINDOW_HOURS: 24
 };
 
@@ -143,6 +143,30 @@ export class GenerationService {
         id: 2,
         front: 'What are the benefits of using TypeScript?',
         back: 'Better IDE support, early error detection, and improved maintainability through static typing.',
+        source: 'ai-full'
+      },
+      {
+        id: 3,
+        front: 'What is the difference between TypeScript and JavaScript?',
+        back: 'TypeScript is a statically typed superset of JavaScript that adds type safety and tooling to the language.',
+        source: 'ai-full'
+      },
+      {
+        id: 4,
+        front: 'What is the difference between TypeScript and JavaScript?',
+        back: 'TypeScript is a statically typed superset of JavaScript that adds type safety and tooling to the language.',
+        source: 'ai-full'
+      },
+      {
+        id: 5,
+        front: 'What is the difference between TypeScript and JavaScript?',
+        back: 'TypeScript is a statically typed superset of JavaScript that adds type safety and tooling to the language.',
+        source: 'ai-full'
+      },
+      {
+        id: 6,
+        front: 'What is the difference between TypeScript and JavaScript?',
+        back: 'TypeScript is a statically typed superset of JavaScript that adds type safety and tooling to the language.',
         source: 'ai-full'
       }
     ];
