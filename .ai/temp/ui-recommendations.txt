@@ -1,0 +1,40 @@
+<conversation_summary>
+<decisions>
+Rozdzielenie autoryzacji na dwa oddzielne widoki: /sign-in (formularz logowania z linkiem do rejestracji) oraz /sign-up (formularz rejestracji).
+Utworzenie dashboardu zawierającego komunikat powitalny, liczbę wygenerowanych fiszek oraz linki do widoków: /generate (generowanie fiszek), /flashcards (lista fiszek) oraz panelu użytkownika.
+Użytkownik po kliknięciu "sign-in" w top bar nawigacyjnym trafia do /sign-in, a po pomyślnym logowaniu zostaje przekierowany do dashboardu.
+Widok /generate zawiera formularz do generowania fiszek z walidowanym polem tekstowym (wraz z licznikiem znaków i komunikatami walidacyjnymi) oraz przyciskiem "generate flashcards", który wywołuje API i wyświetla listę propozycji.
+Lista fiszek (/flashcards) wyświetlana jest w trójkolumnowym gridzie, gdzie każda fiszka pokazuje "front", "back" oraz badge określający źródło ("AI" lub "Manual").
+Na liście propozycji fiszek w widoku /generate każda fiszka ma trzy przyciski: akceptacji (ikonka check i zielona obwódka), odrzucenia (ikonka kosza i czerwona obwódka) oraz edycji (ikonka edit), która otwiera modal do modyfikacji pól "front" i "back".
+Modal edycji zawiera walidowane pola "front" (max 200 znaków) i "back" (max 500 znaków); zmiany są zatwierdzane przyciskiem "Zapisz zmiany", ale zapis do bazy następuje po kliknięciu przycisku "Zakcaptuj wszystkie" lub "Zaakceptuj zatwierdzone".
+Zarządzanie stanem realizowane jest przy użyciu React hooks i Context API z możliwością rozszerzenia o Zustand w przyszłości.
+Stylowanie i responsywność interfejsu odbywają się przy użyciu Tailwind CSS (klasy sm:, md:, lg:) oraz komponentów z biblioteki Shadcn/ui.
+Błędy krytyczne wyświetlane są inline, natomiast mniejsze komunikaty sukcesu i ostrzeżeń pojawiają się jako toast notifications; integracja z API uwzględnia obsługę stanów ładowania i błędów.
+</decisions>
+<matched_recommendations>
+Użycie dedykowanych widoków dla autoryzacji (/sign-in, /sign-up) z jasnym przepływem nawigacji.
+Zaprojektowanie dashboardu jako centralnego punktu nawigacyjnego, z top bar menu i wyraźnymi linkami do generacji fiszek, listy fiszek oraz panelu użytkownika.
+Implementacja widoku generowania fiszek z walidowanym formularzem i dynamiczną listą propozycji, zgodnie z API planem.
+Stworzenie jednolitej listy fiszek z oznaczeniem źródła (badge "AI" lub "Manual") prezentowanej w formacie trójkolumnowego gridu.
+Zastosowanie modalu do edycji fiszek z walidacją pól "front" i "back" oraz mechanizmem zapisu zmian przy użyciu komunikatów inline i toast.
+Wykorzystanie React hooks i Context API do zarządzania stanem aplikacji.
+Stosowanie Tailwind CSS i komponentów Shadcn/ui dla spójnego, responsywnego i dostępnego designu.
+</matched_recommendations>
+<ui_architecture_planning_summary>
+Projekt UI dla MVP obejmuje następujące elementy:
+Autoryzacja: Dwa oddzielne widoki (/sign-in z formularzem logowania oraz /sign-up z formularzem rejestracji) umożliwiają poprawny przepływ logowania i rejestracji. Użytkownik po sukcesie logowania trafia na dashboard.
+Dashboard: Centralny ekran zawiera komunikat powitalny, informację o liczbie wygenerowanych fiszek oraz linki do kluczowych widoków: /generate (generowanie fiszek), /flashcards (lista fiszek) oraz panelu użytkownika. Top bar nawigacyjny umożliwia szybkie przejście do ekranu autoryzacji oraz profilu.
+Widok generowania fiszek (/generate): Zawiera walidowane pole tekstowe do wprowadzania treści (z licznikiem znaków i komunikatami walidacyjnymi) oraz przycisk "generate flashcards" inicjujący wywołanie API generującego propozycje fiszek, które są prezentowane w formie listy.
+Lista fiszek (/flashcards): Wyświetlana jako trójkolumnowy grid, z każdą fiszką pokazującą "front", "back" oraz badge informujący o źródle ("AI" lub "Manual").
+Interakcje z propozycjami fiszek: Każda propozycja posiada przyciski akceptacji (check, zielona obwódka), odrzucenia (bin, czerwona obwódka) oraz edycji (edit, otwierający modal). Modal umożliwia edycję pól "front" i "back" z odpowiednią walidacją, a zmiany są zapisywane po zatwierdzeniu.
+Integracja z API: Interfejs komunikuje się z backendem zgodnie z planem API, korzystając z standardowych mechanizmów obsługi stanów (ładowanie, błędy, sukcesy) za pomocą inline notyfikacji i toastów.
+Zarządzanie stanem: Realizowane przy użyciu React hooks i Context API, z możliwością rozszerzenia o Zustand w przyszłości.
+Responsywność i dostępność: Dzięki Tailwind CSS (klasy sm:, md:, lg:) oraz komponentom Shadcn/ui, interfejs będzie spójny, dostępny oraz responsywny.
+Bezpieczeństwo: Użytkownik będzie autoryzowany przy użyciu JWT, a integracja z Supabase Auth zapewni ochronę danych (wdrożenie JWT na późniejszym etapie).
+</ui_architecture_planning_summary>
+<unresolved_issues>
+Dodatkowe opcje na ekranie /sign-in, takie jak resetowanie hasła oraz dodatkowe wskazówki dla użytkownika, wymagają dalszego doprecyzowania.
+Dokładne kryteria walidacji pola tekstowego w widoku /generate (np. minimalna i maksymalna liczba znaków) mogą wymagać dalszych ustaleń.
+Możliwość rozszerzenia funkcjonalności panelu użytkownika poza zarządzanie profilem w przyszłych fazach.
+</unresolved_issues>
+</conversation_summary>
