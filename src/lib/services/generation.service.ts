@@ -1,11 +1,43 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { CreateGenerationCommand, GenerationDto, FlashcardProposalDto } from '../../types';
 import { createHash } from '../utils/hash';
+import { OpenRouterService } from './openrouter.service';
+import type { OpenRouterConfiguration } from './openrouter.types';
 
 // Rate limiting configuration
 const RATE_LIMIT = {
   MAX_REQUESTS: 200,
   WINDOW_HOURS: 24
+};
+
+// OpenRouter configuration
+const OPENROUTER_CONFIG: OpenRouterConfiguration = {
+  apiKey: import.meta.env.OPENROUTER_API_KEY || '',
+  apiEndpoint: 'https://openrouter.ai/api/v1/chat/completions',
+  defaultModel: 'openai/gpt-4o-mini',
+  modelParameters: {
+    temperature: 0.7,
+    max_tokens: 1000
+  },
+  defaultSystemMessage: `You are a helpful AI assistant specialized in creating educational flashcards.
+Your task is to generate clear and concise flashcards that capture key concepts and important details.
+IMPORTANT: You must ALWAYS respond with a valid JSON object containing an array of flashcards.
+
+The response MUST follow this EXACT structure:
+{
+  "flashcards": [
+    {
+      "front": "question or prompt here",
+      "back": "answer or explanation here"
+    }
+  ]
+}
+
+Rules:
+1. ONLY return the JSON object, no other text
+2. Each flashcard MUST have exactly two fields: "front" and "back"
+3. Both fields MUST be non-empty strings
+4. The "flashcards" array MUST contain at least one flashcard`
 };
 
 export class GenerationError extends Error {
@@ -20,7 +52,21 @@ export class GenerationError extends Error {
 }
 
 export class GenerationService {
-  constructor(private readonly supabase: SupabaseClient) {}
+  private readonly openRouter: OpenRouterService;
+
+  constructor(
+    private readonly supabase: SupabaseClient,
+    openRouterConfig: OpenRouterConfiguration = OPENROUTER_CONFIG
+  ) {
+    if (!openRouterConfig.apiKey) {
+      throw new GenerationError(
+        'OpenRouter API key is not configured. Please set OPENROUTER_API_KEY environment variable.',
+        'CONFIGURATION_ERROR',
+        500
+      );
+    }
+    this.openRouter = new OpenRouterService(openRouterConfig);
+  }
 
   async createGeneration(command: CreateGenerationCommand, userId: string): Promise<GenerationDto> {
     const startTime = Date.now();
@@ -29,8 +75,19 @@ export class GenerationService {
       // Check rate limit
       await this.checkRateLimit(userId);
       
-      // TODO: Replace with actual AI service call
-      const mockProposals = this.generateMockProposals();
+      // Generate flashcards using OpenRouter
+      const response = await this.openRouter.sendChatMessage(
+        `Please generate educational flashcards from the following text. Each flashcard should have a question/prompt on the front and a clear answer/explanation on the back.
+
+Remember to format your response EXACTLY as a JSON object with a 'flashcards' array containing objects with 'front' and 'back' properties.
+
+Here's the text to process:
+
+${command.source_text}`
+      );
+
+      // Parse the response and convert to FlashcardProposalDto format
+      const proposals = this.parseFlashcardProposals(response.answer);
       const generationDuration = Date.now() - startTime;
       
       // Create generation record in database
@@ -40,8 +97,8 @@ export class GenerationService {
         .from('generations')
         .insert({
           user_id: userId,
-          model: 'gpt-4-dev-mock',
-          generated_count: mockProposals.length,
+          model: this.openRouter.modelName,
+          generated_count: proposals.length,
           source_text_hash: sourceTextHash,
           source_text_length: command.source_text.length,
           generation_duration: generationDuration
@@ -65,7 +122,7 @@ export class GenerationService {
         generation_duration: generation.generation_duration,
         created_at: generation.created_at,
         status: 'completed',
-        flashcards_proposals: mockProposals
+        flashcards_proposals: proposals
       };
     } catch (error) {
       // Log error and create error log record
@@ -121,7 +178,7 @@ export class GenerationService {
           user_id: userId,
           error_code: error instanceof GenerationError ? error.code : 'UNKNOWN_ERROR',
           error_message: error.message || 'Unknown error',
-          model: 'gpt-4-dev-mock',
+          model: this.openRouter.modelName,
           source_text_hash: sourceTextHash,
           source_text_length: command.source_text.length
         });
@@ -130,45 +187,26 @@ export class GenerationService {
     }
   }
 
-  private generateMockProposals(): FlashcardProposalDto[] {
-    // Mock data for development
-    return [
-      {
-        id: 1,
-        front: 'What is TypeScript?',
-        back: 'TypeScript is a strongly typed programming language that builds on JavaScript.',
-        source: 'ai-full'
-      },
-      {
-        id: 2,
-        front: 'What are the benefits of using TypeScript?',
-        back: 'Better IDE support, early error detection, and improved maintainability through static typing.',
-        source: 'ai-full'
-      },
-      {
-        id: 3,
-        front: 'What is the difference between TypeScript and JavaScript?',
-        back: 'TypeScript is a statically typed superset of JavaScript that adds type safety and tooling to the language.',
-        source: 'ai-full'
-      },
-      {
-        id: 4,
-        front: 'What is the difference between TypeScript and JavaScript?',
-        back: 'TypeScript is a statically typed superset of JavaScript that adds type safety and tooling to the language.',
-        source: 'ai-full'
-      },
-      {
-        id: 5,
-        front: 'What is the difference between TypeScript and JavaScript?',
-        back: 'TypeScript is a statically typed superset of JavaScript that adds type safety and tooling to the language.',
-        source: 'ai-full'
-      },
-      {
-        id: 6,
-        front: 'What is the difference between TypeScript and JavaScript?',
-        back: 'TypeScript is a statically typed superset of JavaScript that adds type safety and tooling to the language.',
-        source: 'ai-full'
+  private parseFlashcardProposals(content: string): FlashcardProposalDto[] {
+    try {
+      const data = JSON.parse(content);
+      if (!Array.isArray(data?.flashcards)) {
+        throw new Error('Invalid response format: expected flashcards array');
       }
-    ];
+
+      return data.flashcards.map((card: any, index: number) => ({
+        id: index + 1,
+        front: card.front || card.question,
+        back: card.back || card.answer,
+        source: 'ai-full' as const
+      }));
+    } catch (error) {
+      console.error('Failed to parse flashcard proposals:', error);
+      throw new GenerationError(
+        'Failed to parse AI response',
+        'INVALID_RESPONSE_FORMAT',
+        500
+      );
+    }
   }
 } 

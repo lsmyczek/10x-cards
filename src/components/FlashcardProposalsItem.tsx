@@ -27,8 +27,8 @@ export function FlashcardProposalsItem({ flashcard, onAccept, onReject, onEdit }
   return (
     <>
       <Card className={cardClassName}>
-        <CardContent className="p-6">
-          <div className="space-y-4">
+        <CardContent className="p-6 h-full">
+          <div className="flex flex-col space-y-4 h-full">
             <div>
               <h3 className="font-medium mb-2">Front</h3>
               <p className="text-muted-foreground">{flashcard.front}</p>
@@ -39,7 +39,7 @@ export function FlashcardProposalsItem({ flashcard, onAccept, onReject, onEdit }
               <p className="text-muted-foreground">{flashcard.back}</p>
             </div>
 
-            <div className="flex justify-end space-x-2 mt-6">
+            <div className="flex justify-end space-x-2 mt-auto mb-0">
               <Button
                 variant="outline"
                 size="sm"
