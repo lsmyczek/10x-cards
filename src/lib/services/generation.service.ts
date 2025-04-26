@@ -37,7 +37,7 @@ Rules:
 1. ONLY return the JSON object, no other text
 2. Each flashcard MUST have exactly two fields: "front" and "back"
 3. Both fields MUST be non-empty strings
-4. The "flashcards" array MUST contain at least one flashcard`
+4. The "flashcards" array MUST contain at least one flashcard and maximum 6 flashcards`
 };
 
 export class GenerationError extends Error {

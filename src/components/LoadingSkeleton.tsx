@@ -4,7 +4,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 export function LoadingSkeleton() {
   // Show 3 skeleton cards to represent loading state
   return (
-    <div className="grid grid-cols-3 gap-6">
+    <div className="pt-6 mt-12 grid grid-cols-3 gap-6">
       {Array.from({ length: 3 }).map((_, index) => (
         <Card key={index}>
           <CardContent className="p-6">

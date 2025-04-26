@@ -29,7 +29,7 @@ export function SaveButtons({ flashcards, onSave, isSaving }: SaveButtonsProps) 
   };
 
   return (
-    <div className="flex items-center justify-between bg-muted/50 p-4 rounded-lg">
+    <div className="flex items-center justify-between bg-muted/50 py-4">
       <div className="text-sm text-muted-foreground">
         <p>{acceptedCards.length} of {flashcards.length} flashcards accepted</p>
       </div>

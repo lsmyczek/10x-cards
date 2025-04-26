@@ -59,7 +59,7 @@ export function FlashcardEditModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open: boolean) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] flex flex-col">
         <DialogHeader>
           <DialogTitle>Edit Flashcard</DialogTitle>
         </DialogHeader>
@@ -74,7 +74,7 @@ export function FlashcardEditModal({
               value={front}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFront(e.target.value)}
               placeholder="Question or prompt"
-              className="resize-none"
+              className="resize-none max-h-[70px] min-h-[70px]"
             />
           </div>
 
@@ -87,7 +87,7 @@ export function FlashcardEditModal({
               value={back}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setBack(e.target.value)}
               placeholder="Answer or explanation"
-              className="resize-none"
+              className="resize-none max-h-[120px] min-h-[120px]"
             />
           </div>
 

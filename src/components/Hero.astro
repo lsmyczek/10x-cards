@@ -1,0 +1,102 @@
+---
+import { buttonVariants } from "@/components/ui/button";
+import { ChevronRight, Github } from "lucide-react";
+---
+
+<!-- Hero -->
+<div class="relative grid place-items-center h-screen">
+  <div class="relative z-10 container mx-auto px-4 py-24 md:px-6 lg:py-32 2xl:max-w-[1400px] mb-16">
+    <!-- Announcement Banner -->
+    <div class="flex justify-center">
+      <a
+        class="inline-flex items-center gap-x-2 rounded-full border p-1 ps-3 text-sm bg-white transition"
+        href="https://www.10xdevs.pl/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Praca zaliczeniowa 10xDevs
+        <span
+          class="bg-transparent inline-flex items-center justify-center gap-x-2 rounded-full px-2.5 py-1.5 text-sm font-semibold"
+        >
+          <svg
+            class="h-4 w-4 flex-shrink-0"
+            xmlns="http://www.w3.org/2000/svg"
+            width={24}
+            height={24}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width={2}
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="m9 18 6-6-6-6" />
+          </svg>
+        </span>
+      </a>
+    </div>
+    <!-- End Announcement Banner -->
+
+    <!-- Title -->
+    <div class="mx-auto mt-5 max-w-2xl text-center flex flex-col gap-y-2">
+      <h1 class="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-8xl">
+        10<span
+          class="bg-gradient-to-br from-indigo-500 to-teal-400 inline-block text-transparent bg-clip-text mx-1"
+          >x</span
+        >Cards
+      </h1>
+      <p class="text-muted-foreground text-3xl font-light">
+        ucz się efektywniej i oszczędzaj czas!
+      </p>
+    </div>
+    <!-- End Title -->
+
+    <div class="mx-auto mt-5 max-w-2xl text-center">
+      <p class="text-muted-foreground text-base">
+        Twórz zestawy fiszek szybciej niż kiedykolwiek! 10x-cards wykorzystuje moc
+        sztucznej inteligencji, aby na podstawie Twojego tekstu automatycznie
+        podpowiadać gotowe fiszki.
+      </p>
+    </div>
+
+    <!-- Buttons -->
+    <div class="mt-8 flex justify-center gap-3">
+      <a href="/generate" class={buttonVariants({ size: "lg" })}>Rozpocznij</a>
+      <a href="/register" class={buttonVariants({ size: "lg", variant: "outline" })}
+        >Zarejestruj się</a
+      >
+    </div>
+    <!-- End Buttons -->
+
+    <div class="mt-5 flex items-center justify-center gap-x-1 sm:gap-x-3">
+      <span class="text-muted-foreground text-sm flex items-center gap-x-1">
+        <Github className="h-4 w-4 flex-shrink-0" /> Project repository:
+      </span>
+      <a
+        class="inline-flex items-center gap-x-1 text-sm font-medium decoration-2 hover:underline"
+        href="https://github.com/lsmyczek/10x-cards"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        GitHub
+        <ChevronRight className="h-4 w-4 flex-shrink-0" />
+      </a>
+    </div>
+  </div>
+
+  <div class="absolute inset-0 z-0">
+    <div
+      class="absolute top-0 z-[-2] h-screen w-screen bg-white bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(170,170,170,.3),rgba(170,170,170,.15))]"
+    >
+    </div>
+  </div>
+
+  <div class="absolute inset-0 z-1">
+    <div
+      class="relative h-full w-full bg-red [&>div]:absolute [&>div]:h-full [&>div]:w-full [&>div]:bg-[radial-gradient(#dbdde1_1px,transparent_1px)] [&>div]:[background-size:16px_16px] [&>div]:[mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)]"
+    >
+      <div></div>
+    </div>
+  </div>
+</div>
+<!-- End Hero --> 

@@ -43,7 +43,7 @@ export function GenerationForm({ onSubmit, isLoading, onReset }: GenerationFormP
           <div className="space-y-4">
             <Textarea
               placeholder="Paste your text here (1,000 - 10,000 characters)..."
-              className="min-h-[340px] max-h-[340px]"
+              className="min-h-[340px] max-h-[340px] text-base bg-white/40 focus:bg-white transition-all rounded-2xl p-6 resize-none shadow-[0_30px_80px_rgba(0,0,0,0.1)]"
               value={sourceText}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setSourceText(e.target.value)}
               disabled={isLoading}
@@ -63,10 +63,11 @@ export function GenerationForm({ onSubmit, isLoading, onReset }: GenerationFormP
               )}
             </div>
           </div>
-          <div className="flex justify-end gap-4">
+          <div className="flex justify-end gap-4 mx-auto mt-4">
             <Button
                 disabled={sourceText.length === 0 || isLoading}
                 variant="outline"
+                size="lg"
                 onClick={reset}
             >
                 Reset form
@@ -74,6 +75,7 @@ export function GenerationForm({ onSubmit, isLoading, onReset }: GenerationFormP
             <Button
                 type="submit"
                 disabled={!isValidLength || isLoading}
+                size="lg"
             >
                 {isLoading ? 'Generating...' : 'Generate Flashcards'}
             </Button>

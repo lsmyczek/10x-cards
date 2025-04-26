@@ -11,6 +11,8 @@ const buttonVariants = cva(
       variant: {
         default:
           "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
+        navigation: 
+          "text-white rounded-4xl bg-[#2b84d5] hover:bg-[#00aecc] transition-colors duration-300 text-white border-none shadow-none",  
         accept:
           "bg-green-800 text-white shadow-xs hover:bg-green-800/90",
         "outline-accept":

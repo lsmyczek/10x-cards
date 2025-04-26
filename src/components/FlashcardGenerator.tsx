@@ -163,7 +163,7 @@ const handleFormReset = useCallback((resetFn: () => void) => {
   }, []);
 
   return (
-    <div className="space-y-8 pb-16">
+    <div className="container mx-auto max-w-[1400px]space-y-8 pb-16">
       <GenerationForm 
         onSubmit={handleGenerateFlashcards} 
         isLoading={isLoading}
