@@ -1,0 +1,23 @@
+---
+import Layout from "../layouts/Layout.astro";
+import DashboardNavbar from "../components/DashboardNavbar.astro";
+import FancyBg from "../components/FancyBg.astro";
+---
+
+<Layout title="Flashcards">
+  <div class="relative min-h-full">
+    <DashboardNavbar client:load />
+    <div class="relative z-5 pb-16 pt-8 flex flex-col gap-4 px-8">
+      <div class="container mx-auto text-center">
+        <h1 class="text-4xl font-bold tracking-tight">Your Flashcards</h1>
+        <p class="text-muted-foreground mt-2">
+          Here you can see all your flashcards.
+        </p>
+      </div>
+      <div class="">
+
+      </div>
+    </div>
+    <FancyBg />
+  </div>
+</Layout>

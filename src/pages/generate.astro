@@ -2,28 +2,12 @@
 import Layout from '@/layouts/Layout.astro';
 import { FlashcardGenerator } from '@/components/FlashcardGenerator';
 import FancyBg from '@/components/FancyBg.astro';
-import { AddFlashcard } from '@/components/AddFlashcard';
+import DashboardNavbar from '@/components/DashboardNavbar.astro';
 ---
 
 <Layout title="Generate Flashcards">
   <div class="relative min-h-full">
-    <div class="sticky top-0 left-0 w-full z-20 py-8 px-8">
-      <div class="flex items-center gap-6 justify-between bg-transparent bg-gradient-to-b from-white/60 to-white/20 hover:bg-white backdrop-blur-xl ms-0 me-auto w-fit px-3 rounded-4xl border border-black/5 shadow-[0_10px_10px_rgba(0,0,0,0.025)] transition-colors duration-500">
-        <a href="/" class="text-3xl font-bold ps-3">
-          10<span class="bg-gradient-to-br from-indigo-600 to-teal-500 inline-block text-transparent bg-clip-text"
-          >X</span>C
-        </a>
-        <nav class="flex gap-4 p-4">
-            <a href="/" class="text-muted-foreground">
-              Generuj fiszki
-            </a>
-            <a href="/" class="text-muted-foreground">
-              Moje fiszki
-            </a>
-        </nav>
-        <AddFlashcard client:load />
-      </div>
-    </div>
+    <DashboardNavbar client:load />
     <div class="relative z-5 pb-16 pt-8 flex flex-col gap-4 px-8">
       <div class="container mx-auto text-center">
         <h1 class="text-4xl font-bold tracking-tight">Generate Flashcards</h1>

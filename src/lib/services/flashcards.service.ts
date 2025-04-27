@@ -77,4 +77,113 @@ export class FlashcardsService {
       }
     };
   }
+
+  /**
+   * Gets paginated flashcards for a user with optional filtering and sorting
+   */
+  async getFlashcards(userId: string, {
+    page = 1,
+    limit = 20,
+    sort = 'created_at',
+    order = 'desc',
+    source
+  }: {
+    page?: number;
+    limit?: number;
+    sort?: 'created_at' | 'updated_at';
+    order?: 'asc' | 'desc';
+    source?: 'manual' | 'ai-full' | 'ai-edited';
+  }) {
+    console.log(`Fetching flashcards for user ${userId} with params:`, { page, limit, sort, order, source });
+
+    // Calculate offset for pagination
+    const offset = (page - 1) * limit;
+
+    // Start building the query
+    let query = this.supabase
+      .from('flashcards')
+      .select('id, front, back, source, created_at, updated_at, generation_id', { count: 'exact' })
+      .eq('user_id', userId);
+
+    // Apply source filter if provided
+    if (source) {
+      query = query.eq('source', source);
+    }
+
+    // Apply sorting
+    query = query.order(sort, { ascending: order === 'asc' });
+
+    // Apply pagination
+    query = query.range(offset, offset + limit - 1);
+
+    // Execute query
+    const { data, error, count } = await query;
+
+    if (error) {
+      console.error('Failed to fetch flashcards:', error);
+      throw new Error('Failed to fetch flashcards: ' + error.message);
+    }
+
+    // Calculate total pages
+    const totalPages = count ? Math.ceil(count / limit) : 0;
+
+    console.log(`Found ${count} flashcards, returning page ${page} of ${totalPages}`);
+
+    return {
+      data: data as FlashcardDto[],
+      meta: {
+        total: count || 0,
+        page,
+        limit,
+        pages: totalPages
+      }
+    };
+  }
+
+  /**
+   * Updates a flashcard with new front and/or back text
+   * @throws {Error} if flashcard doesn't exist or doesn't belong to the user
+   */
+  async updateFlashcard(id: number, userId: string, updates: { front?: string; back?: string }): Promise<FlashcardDto> {
+    console.log(`Updating flashcard ${id} for user ${userId} with:`, updates);
+
+    // First check if flashcard exists and belongs to the user
+    const { data: flashcard, error: findError } = await this.supabase
+      .from('flashcards')
+      .select('user_id, source')
+      .eq('id', id)
+      .single();
+
+    if (findError || !flashcard) {
+      console.error(`Flashcard ${id} not found:`, findError);
+      throw new Error('Flashcard not found');
+    }
+
+    if (flashcard.user_id !== userId) {
+      console.warn(`User ${userId} attempted to update flashcard ${id} belonging to user ${flashcard.user_id}`);
+      throw new Error('Flashcard does not belong to the user');
+    }
+
+    // If the source is 'ai-full', update it to 'ai-edited'
+    const updateData = {
+      ...updates,
+      ...(flashcard.source === 'ai-full' ? { source: 'ai-edited' as const } : {})
+    };
+
+    // Update the flashcard
+    const { data: updatedFlashcard, error: updateError } = await this.supabase
+      .from('flashcards')
+      .update(updateData)
+      .eq('id', id)
+      .select('id, front, back, source, created_at, updated_at, generation_id')
+      .single();
+
+    if (updateError || !updatedFlashcard) {
+      console.error(`Failed to update flashcard ${id}:`, updateError);
+      throw new Error('Failed to update flashcard');
+    }
+
+    console.log(`Successfully updated flashcard ${id}`);
+    return updatedFlashcard as FlashcardDto;
+  }
 } 

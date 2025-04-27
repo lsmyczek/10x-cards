@@ -1,8 +1,33 @@
 import { z } from 'zod';
 import type { APIRoute } from 'astro';
-import type { CreateFlashcardsCommand } from '../../types';
+import type { CreateFlashcardsCommand, FlashcardsListResponseDto } from '../../types';
 import { FlashcardsService } from '../../lib/services/flashcards.service';
 import { DEFAULT_USER_ID } from '../../db/supabase.client';
+
+// Schema for query parameters validation
+const getFlashcardsQuerySchema = z.object({
+  page: z.coerce
+    .number()
+    .int('Page must be an integer')
+    .positive('Page must be positive')
+    .optional()
+    .default(1),
+  limit: z.coerce
+    .number()
+    .int('Limit must be an integer')
+    .positive('Limit must be positive')
+    .max(100, 'Maximum limit is 100')
+    .optional()
+    .default(20),
+  sort: z.enum(['created_at', 'updated_at'])
+    .optional()
+    .default('created_at'),
+  order: z.enum(['asc', 'desc'])
+    .optional()
+    .default('desc'),
+  source: z.enum(['manual', 'ai-full', 'ai-edited'])
+    .optional()
+});
 
 // Schema for single flashcard input validation
 const createFlashcardInputSchema = z.object({
@@ -108,6 +133,69 @@ export const POST: APIRoute = async ({ request, locals }) => {
           });
         }
       }
+      throw error;
+    }
+  } catch (error) {
+    const requestDuration = performance.now() - requestStartTime;
+    console.error(`Request failed with internal error after ${requestDuration.toFixed(2)}ms:`, error);
+    
+    return new Response(JSON.stringify({
+      error: 'Internal server error'
+    }), {
+      status: 500,
+      headers: { 
+        'Content-Type': 'application/json',
+        'X-Request-Duration': requestDuration.toString()
+      }
+    });
+  }
+};
+
+export const GET: APIRoute = async ({ url, locals }) => {
+  const requestStartTime = performance.now();
+  const userId = DEFAULT_USER_ID;
+
+  try {
+    const { supabase } = locals;
+
+    // Parse and validate query parameters
+    const searchParams = Object.fromEntries(url.searchParams);
+    const validationResult = getFlashcardsQuerySchema.safeParse(searchParams);
+
+    if (!validationResult.success) {
+      const requestDuration = performance.now() - requestStartTime;
+      console.log(`Request validation failed after ${requestDuration.toFixed(2)}ms`);
+      
+      return new Response(JSON.stringify({
+        error: 'Invalid query parameters',
+        details: validationResult.error.errors
+      }), {
+        status: 400,
+        headers: { 
+          'Content-Type': 'application/json',
+          'X-Request-Duration': requestDuration.toString()
+        }
+      });
+    }
+
+    const params = validationResult.data;
+    const flashcardsService = new FlashcardsService(supabase);
+
+    try {
+      const result = await flashcardsService.getFlashcards(userId, params);
+      const requestDuration = performance.now() - requestStartTime;
+      console.log(`Request completed successfully in ${requestDuration.toFixed(2)}ms`);
+      
+      return new Response(JSON.stringify(result), {
+        status: 200,
+        headers: { 
+          'Content-Type': 'application/json',
+          'X-Request-Duration': requestDuration.toString()
+        }
+      });
+    } catch (error) {
+      const requestDuration = performance.now() - requestStartTime;
+      console.error(`Request failed after ${requestDuration.toFixed(2)}ms:`, error);
       throw error;
     }
   } catch (error) {
