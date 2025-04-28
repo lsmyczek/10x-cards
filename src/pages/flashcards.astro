@@ -2,6 +2,8 @@
 import Layout from "../layouts/Layout.astro";
 import DashboardNavbar from "../components/DashboardNavbar.astro";
 import FancyBg from "../components/FancyBg.astro";
+import { FlashcardsListView } from "../components/FlashcardsListView";
+import { Toaster } from "@/components/ui/sonner";
 ---
 
 <Layout title="Flashcards">
@@ -14,10 +16,11 @@ import FancyBg from "../components/FancyBg.astro";
           Here you can see all your flashcards.
         </p>
       </div>
-      <div class="">
-
+      <div>
+        <FlashcardsListView client:load />
       </div>
     </div>
+    <Toaster />
     <FancyBg />
   </div>
 </Layout>

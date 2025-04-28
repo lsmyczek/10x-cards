@@ -121,4 +121,83 @@ export const PATCH: APIRoute = async ({ request, params, locals }) => {
       }
     });
   }
+};
+
+export const DELETE: APIRoute = async ({ params, locals }) => {
+  const requestStartTime = performance.now();
+  const userId = DEFAULT_USER_ID;
+
+  try {
+    const { supabase } = locals;
+    const id = parseInt(params.id || '', 10);
+
+    if (isNaN(id) || id <= 0) {
+      const requestDuration = performance.now() - requestStartTime;
+      return new Response(JSON.stringify({
+        error: 'Invalid flashcard ID',
+        details: 'ID must be a positive integer'
+      }), {
+        status: 400,
+        headers: { 
+          'Content-Type': 'application/json',
+          'X-Request-Duration': requestDuration.toString()
+        }
+      });
+    }
+
+    const flashcardsService = new FlashcardsService(supabase);
+
+    try {
+      await flashcardsService.deleteFlashcard(id, userId);
+      const requestDuration = performance.now() - requestStartTime;
+      
+      return new Response(null, {
+        status: 204,
+        headers: { 
+          'X-Request-Duration': requestDuration.toString()
+        }
+      });
+    } catch (error) {
+      const requestDuration = performance.now() - requestStartTime;
+      
+      if (error instanceof Error) {
+        if (error.message === 'Flashcard not found') {
+          return new Response(JSON.stringify({
+            error: 'Flashcard not found'
+          }), {
+            status: 404,
+            headers: { 
+              'Content-Type': 'application/json',
+              'X-Request-Duration': requestDuration.toString()
+            }
+          });
+        }
+        if (error.message === 'Flashcard does not belong to the user') {
+          return new Response(JSON.stringify({
+            error: 'Forbidden - Flashcard does not belong to the user'
+          }), {
+            status: 403,
+            headers: { 
+              'Content-Type': 'application/json',
+              'X-Request-Duration': requestDuration.toString()
+            }
+          });
+        }
+      }
+      throw error;
+    }
+  } catch (error) {
+    const requestDuration = performance.now() - requestStartTime;
+    console.error(`Request failed with internal error after ${requestDuration.toFixed(2)}ms:`, error);
+    
+    return new Response(JSON.stringify({
+      error: 'Internal server error'
+    }), {
+      status: 500,
+      headers: { 
+        'Content-Type': 'application/json',
+        'X-Request-Duration': requestDuration.toString()
+      }
+    });
+  }
 }; 

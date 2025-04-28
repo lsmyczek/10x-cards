@@ -75,9 +75,8 @@ export function FlashcardAddModal({ isOpen, onClose }: FlashcardAddModalProps) {
       if (!response.ok) {
         throw new Error('Failed to save flashcards. Please try again.');
       }
-      toast.success('Success', {
-        description: 'Flashcard created successfully',
-      });
+      window.dispatchEvent(new Event('flashcard-created'));
+      toast.success('Flashcard created successfully');
       handleClose();
     } catch (err) {
       console.error('Failed to create flashcard:', err);

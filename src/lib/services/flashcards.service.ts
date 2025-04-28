@@ -186,4 +186,42 @@ export class FlashcardsService {
     console.log(`Successfully updated flashcard ${id}`);
     return updatedFlashcard as FlashcardDto;
   }
+
+  /**
+   * Deletes a flashcard if it belongs to the specified user
+   * @throws {Error} if flashcard doesn't exist or doesn't belong to the user
+   */
+  async deleteFlashcard(id: number, userId: string): Promise<void> {
+    console.log(`Deleting flashcard ${id} for user ${userId}`);
+
+    // First check if flashcard exists and belongs to the user
+    const { data: flashcard, error: findError } = await this.supabase
+      .from('flashcards')
+      .select('user_id')
+      .eq('id', id)
+      .single();
+
+    if (findError || !flashcard) {
+      console.error(`Flashcard ${id} not found:`, findError);
+      throw new Error('Flashcard not found');
+    }
+
+    if (flashcard.user_id !== userId) {
+      console.warn(`User ${userId} attempted to delete flashcard ${id} belonging to user ${flashcard.user_id}`);
+      throw new Error('Flashcard does not belong to the user');
+    }
+
+    // Delete the flashcard
+    const { error: deleteError } = await this.supabase
+      .from('flashcards')
+      .delete()
+      .eq('id', id);
+
+    if (deleteError) {
+      console.error(`Failed to delete flashcard ${id}:`, deleteError);
+      throw new Error('Failed to delete flashcard');
+    }
+
+    console.log(`Successfully deleted flashcard ${id}`);
+  }
 } 
