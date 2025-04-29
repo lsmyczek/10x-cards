@@ -85,4 +85,4 @@ export function FlashcardItem({ flashcard, onEdit, onDelete }: FlashcardItemProp
       </CardFooter>
     </Card>
   );
-} 
+}
