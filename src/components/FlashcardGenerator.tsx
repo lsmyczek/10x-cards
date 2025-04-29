@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import type { FlashcardProposalDto, GenerationDto, CreateFlashcardInput } from '@/types';
 import { GenerationForm } from './GenerationForm';
-import { LoadingSkeleton } from './LoadingSkeleton';
+import { LoadingGenerationsSkeleton } from './LoadingGenerationsSkeleton';
 import { FlashcardProposals } from './FlashcardProposals';
 import { SaveButtons } from './SaveButtons';
 import { toast } from 'sonner';
@@ -176,7 +176,7 @@ const handleFormReset = useCallback((resetFn: () => void) => {
         </div>
       )}
       
-      {isLoading && <LoadingSkeleton />}
+      {isLoading && <LoadingGenerationsSkeleton />}
       
       {!isLoading && flashcardProposals.length > 0 && (
         <>

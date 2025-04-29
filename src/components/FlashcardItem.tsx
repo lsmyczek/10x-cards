@@ -13,6 +13,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { Pencil, Trash, WandSparkles } from 'lucide-react';
 
 interface FlashcardItemProps {
   flashcard: FlashcardDto;
@@ -25,16 +26,17 @@ export function FlashcardItem({ flashcard, onEdit, onDelete }: FlashcardItemProp
   const isEdited = flashcard.source === 'ai-edited';
 
   return (
-    <Card className="w-full">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+    <Card className="w-full py-6">
+      <CardHeader className="flex flex-row items-center justify-between">
         <div className="flex gap-2">
           {isAI && (
-            <Badge variant="secondary" className="h-fit">
-              AI
+            <Badge className="h-fit">
+              <WandSparkles className="h-4 w-4 mr-1" />
+              AI Generated
             </Badge>
           )}
           {!isAI && (
-            <Badge variant="outline" className="h-fit">
+            <Badge variant="secondary" className="h-fit">
               Manual
             </Badge>
           )}
@@ -46,26 +48,30 @@ export function FlashcardItem({ flashcard, onEdit, onDelete }: FlashcardItemProp
         </div>
       </CardHeader>
 
-      <CardContent>
-        <div className="space-y-4">
+      <CardContent className="h-full">
+        <div className="flex flex-col space-y-4 h-full">
           <div>
-            <h3 className="font-medium text-sm text-muted-foreground">Front</h3>
-            <p className="mt-1">{flashcard.front}</p>
+            <h3 className="text-lg font-bold mb-2">Front:</h3>
+            <p className="text-muted-foreground">{flashcard.front}</p>
           </div>
           <div>
-            <h3 className="font-medium text-sm text-muted-foreground">Back</h3>
-            <p className="mt-1">{flashcard.back}</p>
+            <h3 className="text-lg font-bold mb-2">Back:</h3>
+            <p className="text-muted-foreground">{flashcard.back}</p>
           </div>
         </div>
       </CardContent>
 
       <CardFooter className="flex justify-end space-x-2">
         <Button variant="outline" onClick={() => onEdit(flashcard)}>
+          <Pencil className="h-4 w-4 mr-2" />
           Edit
         </Button>
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button variant="destructive">Delete</Button>
+            <Button variant="reject">
+              <Trash className="h-4 w-4 mr-2" />
+              Delete
+            </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>

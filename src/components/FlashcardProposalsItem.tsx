@@ -19,8 +19,8 @@ export function FlashcardProposalsItem({ flashcard, onAccept, onReject, onEdit }
   const cardClassName = cn(
     'transition-colors duration-200',
     {
-      'border-green-200 bg-gradient-to-b from-green-50/50 to-transparent': flashcard.accepted,
-      'border-red-200 bg-gradient-to-b from-red-50/50 to-transparent': !flashcard.accepted && flashcard.rejected,
+      'border-green-300 bg-gradient-to-tr from-white to-green-100 ': flashcard.accepted,
+      'border-red-300 bg-gradient-to-tr from-white to-red-100': !flashcard.accepted && flashcard.rejected,
     }
   );
 
@@ -30,12 +30,12 @@ export function FlashcardProposalsItem({ flashcard, onAccept, onReject, onEdit }
         <CardContent className="p-6 h-full">
           <div className="flex flex-col space-y-4 h-full">
             <div>
-              <h3 className="font-medium mb-2">Front</h3>
+              <h3 className="text-lg font-bold mb-2">Front:</h3>
               <p className="text-muted-foreground">{flashcard.front}</p>
             </div>
             
             <div>
-              <h3 className="font-medium mb-2">Back</h3>
+              <h3 className="text-lg font-bold mb-2">Back:</h3>
               <p className="text-muted-foreground">{flashcard.back}</p>
             </div>
 
