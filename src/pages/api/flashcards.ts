@@ -18,7 +18,7 @@ const getFlashcardsQuerySchema = z.object({
     .positive('Limit must be positive')
     .max(100, 'Maximum limit is 100')
     .optional()
-    .default(20),
+    .default(12),
   sort: z.enum(['created_at', 'updated_at'])
     .optional()
     .default('created_at'),
@@ -182,28 +182,57 @@ export const GET: APIRoute = async ({ url, locals }) => {
     const flashcardsService = new FlashcardsService(supabase);
 
     try {
+      // Call the service method with validated parameters
       const result = await flashcardsService.getFlashcards(userId, params);
       const requestDuration = performance.now() - requestStartTime;
-      console.log(`Request completed successfully in ${requestDuration.toFixed(2)}ms`);
+
+      // Log success with pagination details
+      console.log(`Successfully retrieved ${result.data.length} flashcards (page ${result.meta.page} of ${result.meta.pages}, total: ${result.meta.total})`);
+      console.log(`Request completed in ${requestDuration.toFixed(2)}ms`);
       
+      // Return successful response with proper headers
       return new Response(JSON.stringify(result), {
         status: 200,
         headers: { 
           'Content-Type': 'application/json',
-          'X-Request-Duration': requestDuration.toString()
+          'X-Request-Duration': requestDuration.toString(),
+          'X-Total-Count': result.meta.total.toString(),
+          'X-Total-Pages': result.meta.pages.toString(),
+          'X-Current-Page': result.meta.page.toString(),
+          'X-Page-Size': result.meta.limit.toString(),
+          // Add CORS headers as per Astro guidelines
+          'Access-Control-Expose-Headers': 'X-Total-Count, X-Total-Pages, X-Current-Page, X-Page-Size'
         }
       });
     } catch (error) {
       const requestDuration = performance.now() - requestStartTime;
-      console.error(`Request failed after ${requestDuration.toFixed(2)}ms:`, error);
-      throw error;
+      console.error(`Service error after ${requestDuration.toFixed(2)}ms:`, error);
+
+      // Handle specific error cases
+      if (error instanceof Error) {
+        if (error.message.includes('Invalid sort field') || error.message.includes('Invalid order')) {
+          return new Response(JSON.stringify({
+            error: 'Invalid query parameters',
+            details: error.message
+          }), {
+            status: 400,
+            headers: { 
+              'Content-Type': 'application/json',
+              'X-Request-Duration': requestDuration.toString()
+            }
+          });
+        }
+      }
+      throw error; // Re-throw unexpected errors
     }
   } catch (error) {
     const requestDuration = performance.now() - requestStartTime;
-    console.error(`Request failed with internal error after ${requestDuration.toFixed(2)}ms:`, error);
+    console.error(`Unhandled error after ${requestDuration.toFixed(2)}ms:`, error);
     
+    // Return 500 for unhandled errors
     return new Response(JSON.stringify({
-      error: 'Internal server error'
+      error: 'Internal server error',
+      message: error instanceof Error ? error.message : 'An unexpected error occurred'
     }), {
       status: 500,
       headers: { 

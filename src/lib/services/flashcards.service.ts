@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { CreateFlashcardsCommand, FlashcardDto } from '../../types';
+import type { CreateFlashcardsCommand, FlashcardDto, FlashcardsListResponseDto } from '../../types';
 
 export class FlashcardsService {
   constructor(private readonly supabase: SupabaseClient) {}
@@ -80,10 +80,12 @@ export class FlashcardsService {
 
   /**
    * Gets paginated flashcards for a user with optional filtering and sorting
+   * @returns Paginated list of flashcards with metadata
+   * @throws {Error} if database query fails
    */
   async getFlashcards(userId: string, {
     page = 1,
-    limit = 20,
+    limit = 12,
     sort = 'created_at',
     order = 'desc',
     source
@@ -93,51 +95,85 @@ export class FlashcardsService {
     sort?: 'created_at' | 'updated_at';
     order?: 'asc' | 'desc';
     source?: 'manual' | 'ai-full' | 'ai-edited';
-  }) {
+  }): Promise<FlashcardsListResponseDto> {
     console.log(`Fetching flashcards for user ${userId} with params:`, { page, limit, sort, order, source });
 
-    // Calculate offset for pagination
-    const offset = (page - 1) * limit;
+    try {
+      // Calculate offset for pagination
+      const offset = (page - 1) * limit;
+      console.log(`Calculated offset: ${offset} for page ${page} with limit ${limit}`);
 
-    // Start building the query
-    let query = this.supabase
-      .from('flashcards')
-      .select('id, front, back, source, created_at, updated_at, generation_id', { count: 'exact' })
-      .eq('user_id', userId);
+      // Start building the query
+      let query = this.supabase
+        .from('flashcards')
+        .select('id, front, back, source, created_at, updated_at, generation_id', { count: 'exact' })
+        .eq('user_id', userId);
 
-    // Apply source filter if provided
-    if (source) {
-      query = query.eq('source', source);
-    }
-
-    // Apply sorting
-    query = query.order(sort, { ascending: order === 'asc' });
-
-    // Apply pagination
-    query = query.range(offset, offset + limit - 1);
-
-    // Execute query
-    const { data, error, count } = await query;
-
-    if (error) {
-      console.error('Failed to fetch flashcards:', error);
-      throw new Error('Failed to fetch flashcards: ' + error.message);
-    }
-
-    // Calculate total pages
-    const totalPages = count ? Math.ceil(count / limit) : 0;
-
-    console.log(`Found ${count} flashcards, returning page ${page} of ${totalPages}`);
-
-    return {
-      data: data as FlashcardDto[],
-      meta: {
-        total: count || 0,
-        page,
-        limit,
-        pages: totalPages
+      // Apply source filter if provided
+      if (source) {
+        console.log(`Applying source filter: ${source}`);
+        query = query.eq('source', source);
       }
-    };
+
+      // Apply sorting with input validation
+      const validSortFields = ['created_at', 'updated_at'] as const;
+      const validOrders = ['asc', 'desc'] as const;
+      
+      if (!validSortFields.includes(sort as any)) {
+        throw new Error(`Invalid sort field: ${sort}. Must be one of: ${validSortFields.join(', ')}`);
+      }
+      if (!validOrders.includes(order as any)) {
+        throw new Error(`Invalid order: ${order}. Must be one of: ${validOrders.join(', ')}`);
+      }
+
+      console.log(`Applying sorting: ${sort} ${order}`);
+      query = query.order(sort, { ascending: order === 'asc' });
+
+      // Apply pagination
+      console.log(`Applying pagination range: ${offset} to ${offset + limit - 1}`);
+      query = query.range(offset, offset + limit - 1);
+
+      // Execute query
+      const { data, error, count } = await query;
+
+      if (error) {
+        console.error('Failed to fetch flashcards:', error);
+        throw new Error(`Failed to fetch flashcards: ${error.message}`);
+      }
+
+      if (!data) {
+        console.warn('No flashcards found for the given criteria');
+        return {
+          data: [],
+          meta: {
+            total: 0,
+            page,
+            limit,
+            pages: 0
+          }
+        };
+      }
+
+      // Calculate total pages
+      const totalPages = count ? Math.ceil(count / limit) : 0;
+
+      console.log(`Found ${count} flashcards, returning page ${page} of ${totalPages}`);
+
+      return {
+        data: data as FlashcardDto[],
+        meta: {
+          total: count || 0,
+          page,
+          limit,
+          pages: totalPages
+        }
+      };
+    } catch (error) {
+      console.error('Error in getFlashcards:', error);
+      throw error instanceof Error 
+        ? error 
+        : new Error('An unexpected error occurred while fetching flashcards');
+    }
   }
 
   /**
