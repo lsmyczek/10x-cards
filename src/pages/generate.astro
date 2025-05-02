@@ -3,7 +3,7 @@ import Layout from '@/layouts/Layout.astro';
 import { FlashcardGenerator } from '@/components/FlashcardGenerator';
 import FancyBg from '@/components/FancyBg.astro';
 import DashboardNavbar from '@/components/DashboardNavbar.astro';
-import { WandSparkles } from 'lucide-react';
+import { WandSparkles, Sparkles } from 'lucide-react';
 ---
 
 <Layout title="Generate Flashcards">
@@ -11,8 +11,9 @@ import { WandSparkles } from 'lucide-react';
     <DashboardNavbar/>
     <div class="relative z-5 pb-16 pt-8 flex flex-col gap-4 px-8">
       <div class="container mx-auto text-center">
-        <div class="flex items-center justify-center gap-3 text-4xl font-bold tracking-tight">
-            <WandSparkles className="h-7 w-7 text-indigo-800" />
+        <div class="flex items-center justify-center gap-2 text-4xl font-bold tracking-tight">
+            <!-- <WandSparkles className="h-7 w-7 text-indigo-800" /> -->
+            <Sparkles className="h-7 w-7 text-indigo-800" />
             <h1 class="bg-gradient-to-r from-indigo-800 to-teal-500 inline-block text-transparent bg-clip-text mx-1">
               Generate Flashcards
             </h1>

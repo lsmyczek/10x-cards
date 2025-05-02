@@ -4,16 +4,16 @@ import { AddFlashcard } from '@/components/AddFlashcard';
 
 <div class="sticky top-0 left-0 w-full z-20 py-8 px-8">
     <div class="flex items-center gap-6 justify-between bg-transparent bg-gradient-to-b from-white/60 to-white/20 hover:bg-white backdrop-blur-xl ms-0 me-auto w-fit px-3 rounded-4xl border border-black/5 shadow-[0_10px_10px_rgba(0,0,0,0.025)] transition-colors duration-500">
-      <a href="/" class="text-3xl font-bold ps-3">
+      <a href="/dashboard/" class="text-3xl font-bold ps-3">
         10<span class="bg-gradient-to-br from-indigo-600 to-teal-500 inline-block text-transparent bg-clip-text"
         >X</span>C
       </a>
       <nav class="flex gap-4 p-4">
           <a href="/generate" class="text-muted-foreground">
-            Generuj fiszki
+            Generate flashcards
           </a>
           <a href="/flashcards" class="text-muted-foreground">
-            Moje fiszki
+            My flashcards
           </a>
       </nav>
       <AddFlashcard client:load />

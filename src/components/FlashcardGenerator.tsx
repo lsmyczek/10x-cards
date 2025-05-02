@@ -181,7 +181,7 @@ const handleFormReset = useCallback((resetFn: () => void) => {
       {!isLoading && flashcardProposals.length > 0 && (
         <>
           <div className="flex items-center justify-between border-t pt-6 mt-12">
-            <h2 className="text-xl font-semibold">Generated Flashcards</h2>
+            <h2 className="text-3xl font-bold">Generated Flashcards</h2>
             <p className="text-sm text-muted-foreground">
               {flashcardProposals.length} proposal{flashcardProposals.length !== 1 ? 's' : ''}
             </p>

@@ -1,49 +1,42 @@
-import { WandSparkles, PenLine } from 'lucide-react';
+import { WandSparkles, PenLine, Sparkles } from 'lucide-react';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import type { FlashcardSource } from '@/types';
 
 interface FlashcardsListFiltersProps {
-  onFilterChange: (sources: FlashcardSource[]) => void;
-  currentSources: FlashcardSource[];
+  onFilterChange: (source: FlashcardSource | null) => void;
+  currentSource: FlashcardSource | null;
 }
 
-export function FlashcardsListFilters({ onFilterChange, currentSources }: FlashcardsListFiltersProps) {
-  const handleValueChange = (value: string[]) => {
-    const sources: FlashcardSource[] = [];
-    
-    if (value.includes('ai')) {
-      sources.push('ai-full', 'ai-edited');
-    }
-    if (value.includes('manual')) {
-      sources.push('manual');
+export function FlashcardsListFilters({ onFilterChange, currentSource }: FlashcardsListFiltersProps) {
+  const handleValueChange = (value: string) => {
+    // If the same value is clicked again, clear the filter
+    if (value === currentSource) {
+      onFilterChange(null);
+      return;
     }
     
-    // If no filters selected, show all
-    if (value.length === 0) {
-      sources.push('manual', 'ai-full', 'ai-edited');
-    }
-    
-    onFilterChange(sources);
+    // Convert the value to FlashcardSource type
+    onFilterChange(value as FlashcardSource);
   };
-
-  // Convert current sources to toggle values
-  const currentValues = Array.from(new Set(
-    currentSources.map(source => source === 'ai-full' || source === 'ai-edited' ? 'ai' : 'manual')
-  ));
 
   return (
     <ToggleGroup
-      type="multiple"
-      value={currentValues}
+      type="single"
+      value={currentSource ?? ''}
+      variant="outline"
       onValueChange={handleValueChange}
       className="justify-start"
     >
-      <ToggleGroupItem value="ai" aria-label="Toggle AI generated">
-        <WandSparkles className="h-4 w-4 mr-2" />
-        AI
+      <ToggleGroupItem value="ai-full" aria-label="AI generated">
+        <Sparkles className="h-4 w-4" />
+        AI Full
       </ToggleGroupItem>
-      <ToggleGroupItem value="manual" aria-label="Toggle manually created">
-        <PenLine className="h-4 w-4 mr-2" />
+      <ToggleGroupItem value="ai-edited" aria-label="AI generated and edited">
+        <WandSparkles className="h-4 w-4" />
+        AI Edited
+      </ToggleGroupItem>
+      <ToggleGroupItem value="manual" aria-label="Manually created">
+        <PenLine className="h-4 w-4" />
         Manual
       </ToggleGroupItem>
     </ToggleGroup>

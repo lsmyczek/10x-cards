@@ -7,18 +7,10 @@ import { Toaster } from "@/components/ui/sonner";
 ---
 
 <Layout title="Flashcards">
-  <div class="relative min-h-full overflow-hidden">
+  <div class="relative min-h-full">
     <DashboardNavbar/>
-    <div class="relative z-5 pb-16 pt-8 flex flex-col gap-4 px-8">
-      <div class="container mx-auto text-center">
-        <h1 class="text-4xl font-bold tracking-tight">Your Flashcards</h1>
-        <p class="text-muted-foreground mt-2">
-          Here you can see all your flashcards.
-        </p>
-      </div>
-      <div>
+    <div class="relative z-5">
         <FlashcardsListView client:load />
-      </div>
     </div>
     <Toaster />
     <FancyBg />

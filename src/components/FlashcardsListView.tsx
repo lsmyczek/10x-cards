@@ -18,7 +18,7 @@ export function FlashcardsListView() {
     field: 'created_at',
     order: 'desc',
   });
-  const [sources, setSources] = useState<FlashcardSource[]>(['manual', 'ai-full', 'ai-edited']);
+  const [source, setSource] = useState<FlashcardSource | null>(null);
   const [pagination, setPagination] = useState<PaginationMetaDto>({
     page: 1,
     limit: 12,
@@ -38,9 +38,9 @@ export function FlashcardsListView() {
       queryParams.set('page', pagination.page.toString());
       queryParams.set('limit', pagination.limit.toString());
       
-      // Combine sources into a single parameter with comma-separated values
-      if (sources.length > 0) {
-        queryParams.set('sources', sources.join(','));
+      // Add source filter if selected
+      if (source) {
+        queryParams.set('source', source);
       }
 
       const url = `/api/flashcards?${queryParams}`;
@@ -58,7 +58,7 @@ export function FlashcardsListView() {
         requestUrl: url,
         meta: data.meta,
         dataLength: data.data.length,
-        sources,
+        source,
         currentPage: pagination.page,
         limit: pagination.limit
       });
@@ -76,17 +76,17 @@ export function FlashcardsListView() {
     } finally {
       setLoading(false);
     }
-  }, [pagination.page, pagination.limit, sort, sources]);
+  }, [pagination.page, pagination.limit, sort, source]);
 
   // Effect for handling filter and sort changes
   useEffect(() => {
-    // Only reset page if we're not already on page 1 and either sort or sources changed
+    // Only reset page if we're not already on page 1 and either sort or source changed
     if (pagination.page !== 1) {
       setPagination(prev => ({ ...prev, page: 1 }));
     } else {
       fetchFlashcards();
     }
-  }, [sort, sources]); // Remove pagination.page from dependencies
+  }, [sort, source]); // Remove pagination.page from dependencies
 
   // Separate effect for handling page changes
   useEffect(() => {
@@ -110,8 +110,8 @@ export function FlashcardsListView() {
     setSort({ field, order });
   };
 
-  const handleFilterChange = (newSources: FlashcardSource[]) => {
-    setSources(newSources);
+  const handleFilterChange = (newSource: FlashcardSource | null) => {
+    setSource(newSource);
   };
 
   const handlePageChange = (page: number) => {
@@ -186,20 +186,21 @@ export function FlashcardsListView() {
     <div className="container mx-auto py-8">
       <div className="flex flex-col space-y-6">
         <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-semibold">My Flashcards</h2>
-          <FlashcardsListSorting
-            currentSort={sort}
-            onSortChange={handleSortChange}
-          />
-        </div>
-        <div className="flex items-center justify-between">
-          <FlashcardsListFilters
-            currentSources={sources}
-            onFilterChange={handleFilterChange}
-          />
+          <h2 className="text-3xl leading-tight font-bold">My Flashcards</h2>
           <p className="text-sm text-muted-foreground">
             {pagination.total} flashcard{pagination.total !== 1 ? 's' : ''} total
           </p>
+
+        </div>
+        <div className="flex items-center justify-between">
+          <FlashcardsListFilters
+            currentSource={source}
+            onFilterChange={handleFilterChange}
+          />
+           <FlashcardsListSorting
+            currentSort={sort}
+            onSortChange={handleSortChange}
+          />
         </div>
       </div>
 
