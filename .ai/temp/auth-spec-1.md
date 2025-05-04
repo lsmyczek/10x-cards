@@ -48,8 +48,8 @@
 - Endpointy umieszczone w katalogu `/src/pages/api/auth/`:
   - `POST /api/auth/register` – rejestracja nowego użytkownika.
   - `POST /api/auth/login` – logowanie i inicjalizacja sesji użytkownika.
+  - `POST /api/auth/logout` – zakończenie sesji, wylogowywanie użytkownika.
   - `POST /api/auth/password-reset` – inicjacja procedury odzyskiwania hasła (wysłanie emaila z linkiem resetującym).
-  - `POST /api/auth/delete` – usunięcie konta użytkownika wraz z powiązanymi danymi (np. fiszek) po potwierdzeniu przez użytkownika.
 
 ### 2.2 Modele danych i walidacja
 - Modele danych odpowiadające użytkownikom będą zgodne z wymaganiami Supabase Auth, a dodatkowe informacje mogą być przechowywane w bazie danych (np. profil użytkownika) w `/src/db`.

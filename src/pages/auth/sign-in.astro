@@ -1,0 +1,15 @@
+---
+import AuthLayout from "../../layouts/AuthLayout.astro";
+import { AuthCard } from "../../components/auth/AuthCard";
+import { SignInForm } from "../../components/auth/SignInForm";
+---
+
+<AuthLayout title="Sign In">
+    <AuthCard
+        title="Welcome back!"
+            description="Sign in to your account to continue"
+            client:load
+        >
+        <SignInForm client:load />
+    </AuthCard>
+</AuthLayout> 

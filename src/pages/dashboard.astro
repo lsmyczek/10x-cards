@@ -1,83 +1,27 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import DashboardNavbar from "../components/DashboardNavbar.astro";
-import FancyBg from "../components/FancyBg.astro";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+import DashboardLayout from "@/layouts/DashboardLayout.astro";
+import { buttonVariants } from "@/components/ui/button";
+import { Sparkles, Files } from "lucide-react";
 ---
 
-<Layout title="Flashcards">
-  <div class="relative min-h-full">
-    <DashboardNavbar/>
-    <div class="container mx-auto relative z-5 pb-16 pt-8 flex flex-col gap-4 px-8">
-        <div class="w-full max-w-[800px] mx-auto grid  md:grid-cols-2 gap-4">
-          <Card className="py-6">
-            <CardHeader>
-              <CardTitle className="text-2xl font-bold">
-                Hello, Łukasz ! 
-              </CardTitle>
-              <CardDescription>
-                Your account information
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div class="flex flex-col gap-2">
-                <div>
-                  <strong>You generated</strong> 10 flashcards
-                </div>
-              <div>
-                <strong>Total: </strong> 10 flashcards
-              </div>
-              <div>
-                <strong>Last login: </strong> 10 days ago
-              </div>
-    
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="py-6">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold">
-              Edit profile
-            </CardTitle>
-            <CardDescription>
-              Edit your profile information
-            </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form action="">
-            <div class="flex flex-col gap-2">
-              <Label>Name</Label>
-              <Input type="text" name="name" />
-            </div>
-          </form>
-        </CardContent>
-          </Card>
-          <Card className="md:col-span-2 py-6">
-            <CardHeader>
-              <CardTitle className="text-2xl font-bold">
-                Change password
-              </CardTitle>
-              <CardDescription>
-                Change your password
-              </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form action="" class="grid md:grid-cols-2 gap-4">
-              <div class="flex flex-col gap-2">
-                <Label>New password</Label>
-                <Input type="password" name="newPassword" />
-              </div>
-              <div class="flex flex-col gap-2">
-                <Label>Confirm new password</Label>
-                <Input type="password" name="confirmNewPassword" />
-              </div>
-            </form>
-          </CardContent>
-          </Card>
-        </div>
+<DashboardLayout title="Dashboard">
+    <div class="grid place-items-center h-[70%]">
+      <div class="flex gap-2 flex-col items-center">
+       <h1 class="text-6xl font-bold"> Welcome to 10xCards!</h1>
+       <p class="text-xltext-muted-foreground">
+        The best way to learn new things.
+       </p>
+       <div class="flex gap-4 mt-4">
+        <a href="/flashcards" class={buttonVariants({ size: "lg", variant: "outline" })}>
+          <Files className="w-4 h-4" />
+            My flashcards
+        </a>
+        <a href="/generate" class={buttonVariants({ size: "lg"})}>
+            <Sparkles className="w-4 h-4" />
+            Generate flashcards
+        </a>
+
+       </div>
+      </div>
     </div>
-    <FancyBg />
-  </div>
-</Layout>
+</DashboardLayout>

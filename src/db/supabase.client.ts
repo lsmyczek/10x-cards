@@ -1,10 +1,17 @@
 import { createClient } from '@supabase/supabase-js';
-
 import type { Database } from './database.types';
 
-const supabaseUrl = import.meta.env.SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.SUPABASE_KEY;
+if (!import.meta.env.PUBLIC_SUPABASE_URL) {
+  throw new Error('Missing env.PUBLIC_SUPABASE_URL');
+}
 
-export const DEFAULT_USER_ID = '422de366-8621-4e72-a65c-5c8bcb63248f';
+if (!import.meta.env.PUBLIC_SUPABASE_ANON_KEY) {
+  throw new Error('Missing env.PUBLIC_SUPABASE_ANON_KEY');
+}
 
-export const supabaseClient = createClient<Database>(supabaseUrl, supabaseAnonKey); 
+export const supabase = createClient<Database>(
+  import.meta.env.PUBLIC_SUPABASE_URL,
+  import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+);
+
+export type SupabaseClient = typeof supabase; 

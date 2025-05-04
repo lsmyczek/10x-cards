@@ -1,18 +1,9 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import DashboardNavbar from "../components/DashboardNavbar.astro";
-import FancyBg from "../components/FancyBg.astro";
 import { FlashcardsListView } from "../components/FlashcardsListView";
-import { Toaster } from "@/components/ui/sonner";
+import DashboardLayout from "@/layouts/DashboardLayout.astro";
+
 ---
 
-<Layout title="Flashcards">
-  <div class="relative min-h-full">
-    <DashboardNavbar/>
-    <div class="relative z-5">
-        <FlashcardsListView client:load />
-    </div>
-    <Toaster />
-    <FancyBg />
-  </div>
-</Layout>
+<DashboardLayout title="Flashcards">
+    <FlashcardsListView client:load />
+</DashboardLayout>

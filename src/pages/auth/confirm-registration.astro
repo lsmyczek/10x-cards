@@ -1,0 +1,18 @@
+---
+import AuthLayout from "../../layouts/AuthLayout.astro";
+import { AuthCard } from "../../components/auth/AuthCard";
+---
+
+<AuthLayout title="Confirm Registration">
+    <AuthCard
+        title="Check your email"
+        description="We've sent you a confirmation link. Please check your email to activate your account."
+    >
+        <div class="text-center mt-4">
+            <p class="text-sm text-muted-foreground">
+                Didn't receive the email? Check your spam folder or
+                <a href="/auth/sign-up" class="text-primary hover:underline">try again</a>
+            </p>
+        </div>
+    </AuthCard>
+</AuthLayout> 

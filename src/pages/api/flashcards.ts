@@ -2,7 +2,6 @@ import { z } from 'zod';
 import type { APIRoute } from 'astro';
 import type { CreateFlashcardsCommand, FlashcardsListResponseDto } from '../../types';
 import { FlashcardsService } from '../../lib/services/flashcards.service';
-import { DEFAULT_USER_ID } from '../../db/supabase.client';
 
 // Schema for query parameters validation
 const getFlashcardsQuerySchema = z.object({
@@ -65,7 +64,16 @@ export const prerender = false;
 
 export const POST: APIRoute = async ({ request, locals }) => {
   const requestStartTime = performance.now();
-  const userId = DEFAULT_USER_ID;
+  
+  if (!locals.user) {
+    return new Response(JSON.stringify({
+      error: 'Unauthorized',
+      message: 'Authentication required'
+    }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
 
   try {
     const { supabase } = locals;
@@ -94,7 +102,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const flashcardsService = new FlashcardsService(supabase);
 
     try {
-      const result = await flashcardsService.createFlashcards(command, userId);
+      const result = await flashcardsService.createFlashcards(command, locals.user.id);
       const requestDuration = performance.now() - requestStartTime;
       console.log(`Request completed successfully in ${requestDuration.toFixed(2)}ms`);
       
@@ -153,7 +161,16 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
 export const GET: APIRoute = async ({ url, locals }) => {
   const requestStartTime = performance.now();
-  const userId = DEFAULT_USER_ID;
+
+  if (!locals.user) {
+    return new Response(JSON.stringify({
+      error: 'Unauthorized',
+      message: 'Authentication required'
+    }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
 
   try {
     const { supabase } = locals;
@@ -183,7 +200,7 @@ export const GET: APIRoute = async ({ url, locals }) => {
 
     try {
       // Call the service method with validated parameters
-      const result = await flashcardsService.getFlashcards(userId, params);
+      const result = await flashcardsService.getFlashcards(locals.user.id, params);
       const requestDuration = performance.now() - requestStartTime;
 
       // Log success with pagination details

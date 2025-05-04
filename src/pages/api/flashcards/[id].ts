@@ -2,7 +2,6 @@ import { z } from 'zod';
 import type { APIRoute } from 'astro';
 import type { UpdateFlashcardCommand } from '../../../types';
 import { FlashcardsService } from '../../../lib/services/flashcards.service';
-import { DEFAULT_USER_ID } from '../../../db/supabase.client';
 
 // Schema for request body validation
 const updateFlashcardSchema = z.object({
@@ -26,7 +25,16 @@ export const prerender = false;
 
 export const PATCH: APIRoute = async ({ request, params, locals }) => {
   const requestStartTime = performance.now();
-  const userId = DEFAULT_USER_ID;
+
+  if (!locals.user) {
+    return new Response(JSON.stringify({
+      error: 'Unauthorized',
+      message: 'Authentication required'
+    }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
 
   try {
     const { supabase } = locals;
@@ -68,7 +76,7 @@ export const PATCH: APIRoute = async ({ request, params, locals }) => {
     const flashcardsService = new FlashcardsService(supabase);
 
     try {
-      const result = await flashcardsService.updateFlashcard(id, userId, command);
+      const result = await flashcardsService.updateFlashcard(id, locals.user.id, command);
       const requestDuration = performance.now() - requestStartTime;
       
       return new Response(JSON.stringify(result), {
@@ -125,7 +133,16 @@ export const PATCH: APIRoute = async ({ request, params, locals }) => {
 
 export const DELETE: APIRoute = async ({ params, locals }) => {
   const requestStartTime = performance.now();
-  const userId = DEFAULT_USER_ID;
+
+  if (!locals.user) {
+    return new Response(JSON.stringify({
+      error: 'Unauthorized',
+      message: 'Authentication required'
+    }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
 
   try {
     const { supabase } = locals;
@@ -148,7 +165,7 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
     const flashcardsService = new FlashcardsService(supabase);
 
     try {
-      await flashcardsService.deleteFlashcard(id, userId);
+      await flashcardsService.deleteFlashcard(id, locals.user.id);
       const requestDuration = performance.now() - requestStartTime;
       
       return new Response(null, {

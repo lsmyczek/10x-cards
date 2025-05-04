@@ -51,7 +51,6 @@ export function FlashcardItem({ flashcard, onEdit, onDelete }: FlashcardItemProp
       <CardContent className="h-full">
         <div className="flex flex-col space-y-4 h-full">
           <div>
-            {flashcard.id}
             <h3 className="text-lg font-bold mb-2">Front:</h3>
             <p className="text-muted-foreground">{flashcard.front}</p>
           </div>

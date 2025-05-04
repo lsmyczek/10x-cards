@@ -3,7 +3,6 @@ import { z } from 'zod';
 import type { CreateGenerationCommand } from '../../types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { GenerationService, GenerationError } from '../../lib/services/generation.service';
-import { DEFAULT_USER_ID } from '../../db/supabase.client';
 
 // Disable static pre-rendering for this endpoint
 export const prerender = false;
@@ -17,6 +16,16 @@ const createGenerationSchema = z.object({
 
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
+    if (!locals.user) {
+      return new Response(JSON.stringify({
+        error: 'Unauthorized',
+        message: 'Authentication required'
+      }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
     // Get supabase client from context
     const supabase = locals.supabase as SupabaseClient;
 
@@ -39,7 +48,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     
     const result = await generationService.createGeneration(
       command,
-      DEFAULT_USER_ID
+      locals.user.id
     );
 
     return new Response(JSON.stringify(result), {

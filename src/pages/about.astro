@@ -1,0 +1,25 @@
+---
+import DashboardLayout from '@/layouts/DashboardLayout.astro';
+---
+
+<DashboardLayout title="Generate Flashcards">
+  <div class="grid place-items-center min-h-[70%]">
+    <div class="relative z-5 pb-16 pt-8 flex flex-col gap-4 max-w-[800px] mx-auto">
+      <div class="text-center">
+        <h1 class="flex items-center justify-center gap-2 text-6xl font-bold tracking-tight mb-6">
+          About 10<span class="bg-gradient-to-br from-indigo-600 to-teal-500 inline-block text-transparent bg-clip-text"
+          >x</span>Cards
+        </h1>
+        <p class="text-muted-foreground mt-2">
+          The 10x-cards project aims to enable users to quickly create and manage educational flashcard sets. The application uses LLM models (via API) to generate flashcard suggestions based on provided text.
+        </p>
+        <p class="text-muted-foreground mt-2">
+          Special thanks to the creators of <a href="https://10xdevs.pl" class="text-primary font-bold hover:text-primary/80 transition-colors duration-200" target="_blank" rel="noopener noreferrer">10xDevs.pl</a>:
+        </p>
+        <p class="text-muted-foreground mt-2">
+          <a href="https://www.linkedin.com/in/mkczarkowski/" class="text-primary font-bold hover:text-primary/80 transition-colors duration-200" target="_blank" rel="noopener noreferrer">Marcin Czarkowski</a> & <a href="https://www.linkedin.com/in/psmyrdek/" class="text-primary font-bold hover:text-primary/80 transition-colors duration-200" target="_blank" rel="noopener noreferrer">Przemek Smyrdek</a> (Przeprogramowani)
+        </p>
+      </div>
+    </div>
+  </div>
+</DashboardLayout> 

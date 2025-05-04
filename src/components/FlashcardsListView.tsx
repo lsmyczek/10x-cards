@@ -183,7 +183,7 @@ export function FlashcardsListView() {
   const noFlashcards = flashcards.length === 0;
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="w-full">
       <div className="flex flex-col space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="text-3xl leading-tight font-bold">My Flashcards</h2>
@@ -237,6 +237,6 @@ export function FlashcardsListView() {
         initialFront={selectedFlashcard?.front ?? ''}
         initialBack={selectedFlashcard?.back ?? ''}
       />
-    </div>
+  </div>
   );
 } 
