@@ -19,6 +19,7 @@
 - **Frontend**: Astro 5, React 19, TypeScript 5, Tailwind CSS 4, Shadcn/ui
 - **Backend**: Supabase (PostgreSQL, authentication, scalable data storage)
 - **AI Integration**: Openrouter.ai (support for multiple LLM models including OpenAI, Anthropic, and Google)
+- **Testing**: Vitest (unit/integration tests), Playwright (E2E tests), React Testing Library (component testing)
 - **CI/CD & Hosting**: GitHub Actions, DigitalOcean (Docker-based deployment)
 
 ## Getting Started Locally
@@ -56,6 +57,8 @@
 - **npm run lint**: Lints the codebase.
 - **npm run lint:fix**: Automatically fixes linting issues.
 - **npm run format**: Formats the code using Prettier.
+- **npm run test**: Runs unit and integration tests with Vitest.
+- **npm run test:e2e**: Runs end-to-end tests with Playwright.
 
 ## Project Scope
 
