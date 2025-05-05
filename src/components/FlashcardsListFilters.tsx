@@ -25,7 +25,7 @@ export function FlashcardsListFilters({ onFilterChange, currentSource }: Flashca
       value={currentSource ?? ''}
       variant="outline"
       onValueChange={handleValueChange}
-      className="justify-start"
+      className="justify-start w-full md:w-auto"
     >
       <ToggleGroupItem value="ai-full" aria-label="AI generated">
         <Sparkles className="h-4 w-4" />

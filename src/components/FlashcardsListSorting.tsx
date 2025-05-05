@@ -37,7 +37,7 @@ export function FlashcardsListSorting({ onSortChange, currentSort }: FlashcardsL
       value={currentValue}
       onValueChange={handleSortChange}
     >
-      <SelectTrigger className="w-[180px] bg-white font-medium">
+      <SelectTrigger className="w-[180px] bg-white font-medium me-0 ms-auto">
         <SelectValue placeholder="Sort by" />
       </SelectTrigger>
       <SelectContent>

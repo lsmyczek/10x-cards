@@ -63,7 +63,7 @@ export function GenerationForm({ onSubmit, isLoading, onReset }: GenerationFormP
               )}
             </div>
           </div>
-          <div className="flex justify-end gap-4 mx-auto mt-4">
+          <div className="flex flex-col md:flex-row justify-end gap-4 mx-auto mt-4">
             <Button
                 disabled={sourceText.length === 0 || isLoading}
                 variant="outline"

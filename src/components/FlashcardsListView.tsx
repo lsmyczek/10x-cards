@@ -186,13 +186,13 @@ export function FlashcardsListView() {
     <div className="w-full">
       <div className="flex flex-col space-y-6">
         <div className="flex justify-between items-center">
-          <h2 className="text-3xl leading-tight font-bold">My Flashcards</h2>
+          <h2 className="text-2xl md:text-3xl leading-tight font-bold">My Flashcards</h2>
           <p className="text-sm text-muted-foreground">
             {pagination.total} flashcard{pagination.total !== 1 ? 's' : ''} total
           </p>
 
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col md:flex-row items-center gap-4 justify-between">
           <FlashcardsListFilters
             currentSource={source}
             onFilterChange={handleFilterChange}

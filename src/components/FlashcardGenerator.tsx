@@ -163,7 +163,7 @@ const handleFormReset = useCallback((resetFn: () => void) => {
   }, []);
 
   return (
-    <div className="container mx-auto max-w-[1400px]space-y-8 pb-16">
+    <div className="space-y-8 pb-16">
       <GenerationForm 
         onSubmit={handleGenerateFlashcards} 
         isLoading={isLoading}
@@ -180,8 +180,8 @@ const handleFormReset = useCallback((resetFn: () => void) => {
       
       {!isLoading && flashcardProposals.length > 0 && (
         <>
-          <div className="flex items-center justify-between border-t pt-6 mt-12">
-            <h2 className="text-3xl font-bold">Generated Flashcards</h2>
+          <div className="flex items-center justify-between border-t pt-6 mt-12 mb-4">
+            <h2 className="text-2xl md:text-3xl font-bold">Generated Flashcards</h2>
             <p className="text-sm text-muted-foreground">
               {flashcardProposals.length} proposal{flashcardProposals.length !== 1 ? 's' : ''}
             </p>

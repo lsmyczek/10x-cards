@@ -1,13 +1,14 @@
 ---
 import { AddFlashcard } from '@/components/AddFlashcard';
-import { CircleUserRound, LogOut, Menu } from 'lucide-react';
+import { CircleUserRound, LogOut } from 'lucide-react';
+import { MobileMenuToggle } from '@/components/MobileMenuToggle';
 const user = Astro.locals.user;
 if (!user) {
   return Astro.redirect('/auth/sign-in');
 }
 ---
 
-<div class="sticky top-0 left-0 w-full z-20 py-0 md:py-8 flex items-center justify-between xl:justify-end mb-4 md:mb-0">
+<div class="sticky top-0 left-0 w-full z-20 py-4 md:py-8 flex items-center justify-between xl:justify-end mb-4 md:mb-0">
 
     <div class="flex items-center gap-6 justify-between bg-transparent bg-gradient-to-b from-white/60 to-white/20 hover:bg-white backdrop-blur-xl w-full xl:w-fit rounded-4xl border border-black/5 shadow-[0_10px_10px_rgba(0,0,0,0.025)] transition-colors duration-500">
       <a href="/dashboard/" class="text-3xl font-bold ps-6 block xl:hidden">
@@ -26,9 +27,7 @@ if (!user) {
             Logout
           </button>
         </form>
-        <button class="flex items-center justify-center rounded-4xl h-9 aspect-square text-sm font-medium text-muted-foreground bg-black/5 hover:bg-black hover:text-white transition-colors duration-300 cursor-pointer xl:hidden">
-          <Menu className="w-6 h-6"/>
-        </button>
+        <MobileMenuToggle client:load />
       </div>
     </div>
 
