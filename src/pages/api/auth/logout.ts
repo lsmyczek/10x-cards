@@ -4,12 +4,7 @@ import { createSupabaseServer } from '../../../db/supabase.server';
 export const POST: APIRoute = async ({ request, cookies, redirect }) => {
   const supabase = createSupabaseServer({ 
     headers: request.headers,
-    cookies: {
-      get: (name: string) => cookies.get(name)?.value ?? '',
-      set: (name: string, value: string, options?: any) => {
-        cookies.set(name, value, options);
-      },
-    }
+    cookies,
   });
 
   const { error } = await supabase.auth.signOut();

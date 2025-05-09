@@ -16,12 +16,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
 
     const supabase = createSupabaseServer({ 
       headers: request.headers,
-      cookies: {
-        get: (name: string) => cookies.get(name)?.value ?? '',
-        set: (name: string, value: string, options?: any) => {
-          cookies.set(name, value, options);
-        },
-      }
+      cookies,
     });
 
     const { data, error } = await supabase.auth.signInWithPassword({

@@ -8,6 +8,7 @@ const PUBLIC_PATHS = [
   "/auth/sign-up",
   "/auth/reset-password",
   "/auth/confirm-registration",
+  "/auth/confirm-reset-password",
   "/",
   // Auth API endpoints
   "/api/auth/login",
@@ -23,12 +24,7 @@ export const onRequest = defineMiddleware(
     // Create server-side Supabase client
     locals.supabase = createSupabaseServer({
       headers: request.headers,
-      cookies: {
-        get: (name: string) => cookies.get(name)?.value ?? '',
-        set: (name: string, value: string, options?: any) => {
-          cookies.set(name, value, options);
-        },
-      },
+      cookies,
     });
 
     // Skip auth check for public paths
