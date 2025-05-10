@@ -14,7 +14,7 @@ export class HomePage {
   constructor(page: Page) {
     this.page = page;
     this.heading = page.locator('h1');
-    this.heroSection = page.locator('section');
+    this.heroSection = page.getByRole('region', { name: 'hero' });
     this.ctaButton = page.getByRole('link', { name: /get started/i });
     this.navbarLinks = page.locator('nav a');
   }

@@ -11,7 +11,7 @@ test.describe('Home Page', () => {
     await expect(page).toHaveTitle(/10x Cards/);
   });
 
-  test('should navigate to the dashboard when clicking CTA', async ({ page }) => {
+  test('should navigate to the sign-in page when clicking CTA', async ({ page }) => {
     const homePage = new HomePage(page);
     await homePage.goto();
     
@@ -22,6 +22,6 @@ test.describe('Home Page', () => {
     await homePage.clickCTA();
     
     // Verify navigation occurred
-    await expect(page).toHaveURL(/.*dashboard/);
+    await expect(page).toHaveURL(/.*auth\/sign-in/);
   });
 }); 
