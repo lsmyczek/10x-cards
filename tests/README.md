@@ -52,6 +52,7 @@ We use Playwright for E2E testing. These commands are available:
 ### Unit Tests (Vitest)
 
 1. Use the `vi` object for test doubles:
+
    - `vi.fn()` for function mocks
    - `vi.spyOn()` to monitor existing functions
    - `vi.mock()` for module mocks
@@ -69,12 +70,13 @@ We use Playwright for E2E testing. These commands are available:
 2. Only test with Chromium browser as configured.
 
 3. Use locators for resilient element selection:
+
    ```typescript
    // Prefer this:
-   page.getByRole('button', { name: 'Submit' })
-   
+   page.getByRole("button", { name: "Submit" });
+
    // Over this:
-   page.locator('.submit-button')
+   page.locator(".submit-button");
    ```
 
 4. Take advantage of visual comparison with `expect(page).toHaveScreenshot()`.
@@ -87,4 +89,4 @@ We use Playwright for E2E testing. These commands are available:
 - Prefer functional testing (behavior) over implementation details.
 - Keep selectors resilient to UI changes.
 - Avoid flaky tests with proper waiting and assertions.
-- Generate tests with Playwright codegen when appropriate. 
+- Generate tests with Playwright codegen when appropriate.

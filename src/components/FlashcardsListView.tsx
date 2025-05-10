@@ -1,12 +1,12 @@
-import { useEffect, useState, useCallback } from 'react';
-import type { FlashcardDto, FlashcardsListResponseDto, FlashcardSource, PaginationMetaDto } from '../types';
-import { FlashcardItem } from './FlashcardItem';
-import { FlashcardEditModal } from './FlashcardEditModal';
-import { toast } from 'sonner';
-import { LoadingSkeleton } from './LoadingSkeleton';
-import { FlashcardsListSorting, type SortField, type SortOrder } from './FlashcardsListSorting';
-import { FlashcardsListFilters } from './FlashcardsListFilters';
-import { FlashcardsListPagination } from './FlashcardsListPagination';
+import { useEffect, useState, useCallback } from "react";
+import type { FlashcardDto, FlashcardsListResponseDto, FlashcardSource, PaginationMetaDto } from "../types";
+import { FlashcardItem } from "./FlashcardItem";
+import { FlashcardEditModal } from "./FlashcardEditModal";
+import { toast } from "sonner";
+import { LoadingSkeleton } from "./LoadingSkeleton";
+import { FlashcardsListSorting, type SortField, type SortOrder } from "./FlashcardsListSorting";
+import { FlashcardsListFilters } from "./FlashcardsListFilters";
+import { FlashcardsListPagination } from "./FlashcardsListPagination";
 
 export function FlashcardsListView() {
   const [flashcards, setFlashcards] = useState<FlashcardDto[]>([]);
@@ -15,8 +15,8 @@ export function FlashcardsListView() {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedFlashcard, setSelectedFlashcard] = useState<FlashcardDto | null>(null);
   const [sort, setSort] = useState<{ field: SortField; order: SortOrder }>({
-    field: 'created_at',
-    order: 'desc',
+    field: "created_at",
+    order: "desc",
   });
   const [source, setSource] = useState<FlashcardSource | null>(null);
   const [pagination, setPagination] = useState<PaginationMetaDto>({
@@ -31,48 +31,48 @@ export function FlashcardsListView() {
     try {
       setLoading(true);
       const queryParams = new URLSearchParams();
-      
+
       // Add basic query parameters
-      queryParams.set('sort', sort.field);
-      queryParams.set('order', sort.order);
-      queryParams.set('page', pagination.page.toString());
-      queryParams.set('limit', pagination.limit.toString());
-      
+      queryParams.set("sort", sort.field);
+      queryParams.set("order", sort.order);
+      queryParams.set("page", pagination.page.toString());
+      queryParams.set("limit", pagination.limit.toString());
+
       // Add source filter if selected
       if (source) {
-        queryParams.set('source', source);
+        queryParams.set("source", source);
       }
 
       const url = `/api/flashcards?${queryParams}`;
-      console.log('Fetching flashcards with URL:', url);
-      
+      console.log("Fetching flashcards with URL:", url);
+
       const response = await fetch(url);
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('API Error Response:', errorText);
-        throw new Error('Failed to fetch flashcards');
+        console.error("API Error Response:", errorText);
+        throw new Error("Failed to fetch flashcards");
       }
-      
+
       const data: FlashcardsListResponseDto = await response.json();
-      console.log('API Response:', {
+      console.log("API Response:", {
         requestUrl: url,
         meta: data.meta,
         dataLength: data.data.length,
         source,
         currentPage: pagination.page,
-        limit: pagination.limit
+        limit: pagination.limit,
       });
 
       setFlashcards(data.data);
-      setPagination(prev => ({
+      setPagination((prev) => ({
         ...data.meta,
-        limit: prev.limit // Preserve the limit from state
+        limit: prev.limit, // Preserve the limit from state
       }));
       setError(null);
     } catch (err) {
-      console.error('Error fetching flashcards:', err);
-      setError(err instanceof Error ? err.message : 'An error occurred');
-      toast.error('Failed to load flashcards. Please try again later.');
+      console.error("Error fetching flashcards:", err);
+      setError(err instanceof Error ? err.message : "An error occurred");
+      toast.error("Failed to load flashcards. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -82,7 +82,7 @@ export function FlashcardsListView() {
   useEffect(() => {
     // Only reset page if we're not already on page 1 and either sort or source changed
     if (pagination.page !== 1) {
-      setPagination(prev => ({ ...prev, page: 1 }));
+      setPagination((prev) => ({ ...prev, page: 1 }));
     } else {
       fetchFlashcards();
     }
@@ -96,13 +96,13 @@ export function FlashcardsListView() {
   // Effect for flashcard creation event
   useEffect(() => {
     const handleFlashcardCreated = () => {
-      setPagination(prev => ({ ...prev, page: 1 }));
+      setPagination((prev) => ({ ...prev, page: 1 }));
       fetchFlashcards();
     };
 
-    window.addEventListener('flashcard-created', handleFlashcardCreated);
+    window.addEventListener("flashcard-created", handleFlashcardCreated);
     return () => {
-      window.removeEventListener('flashcard-created', handleFlashcardCreated);
+      window.removeEventListener("flashcard-created", handleFlashcardCreated);
     };
   }, [fetchFlashcards]);
 
@@ -115,8 +115,8 @@ export function FlashcardsListView() {
   };
 
   const handlePageChange = (page: number) => {
-    console.log('Changing to page:', page);
-    setPagination(prev => ({ ...prev, page }));
+    console.log("Changing to page:", page);
+    setPagination((prev) => ({ ...prev, page }));
   };
 
   const handleEdit = (flashcard: FlashcardDto) => {
@@ -127,17 +127,17 @@ export function FlashcardsListView() {
   const handleDelete = async (id: number) => {
     try {
       const response = await fetch(`/api/flashcards/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (!response.ok) {
-        throw new Error('Failed to delete flashcard');
+        throw new Error("Failed to delete flashcard");
       }
 
       setFlashcards((prev) => prev.filter((f) => f.id !== id));
-      toast.success('Flashcard deleted successfully');
+      toast.success("Flashcard deleted successfully");
     } catch (err) {
-      toast.error('Failed to delete flashcard. Please try again.');
+      toast.error("Failed to delete flashcard. Please try again.");
     }
   };
 
@@ -146,25 +146,23 @@ export function FlashcardsListView() {
 
     try {
       const response = await fetch(`/api/flashcards/${selectedFlashcard.id}`, {
-        method: 'PATCH',
+        method: "PATCH",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ front, back }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update flashcard');
+        throw new Error("Failed to update flashcard");
       }
 
       const updated = await response.json();
-      setFlashcards((prev) =>
-        prev.map((f) => (f.id === selectedFlashcard.id ? updated : f))
-      );
+      setFlashcards((prev) => prev.map((f) => (f.id === selectedFlashcard.id ? updated : f)));
       setEditModalOpen(false);
-      toast.success('Flashcard updated successfully');
+      toast.success("Flashcard updated successfully");
     } catch (err) {
-      toast.error('Failed to update flashcard. Please try again.');
+      toast.error("Failed to update flashcard. Please try again.");
     }
   };
 
@@ -188,19 +186,12 @@ export function FlashcardsListView() {
         <div className="flex justify-between items-center">
           <h2 className="text-2xl md:text-3xl leading-tight font-bold">My Flashcards</h2>
           <p className="text-sm text-muted-foreground">
-            {pagination.total} flashcard{pagination.total !== 1 ? 's' : ''} total
+            {pagination.total} flashcard{pagination.total !== 1 ? "s" : ""} total
           </p>
-
         </div>
         <div className="flex flex-col md:flex-row items-center gap-4 justify-between">
-          <FlashcardsListFilters
-            currentSource={source}
-            onFilterChange={handleFilterChange}
-          />
-           <FlashcardsListSorting
-            currentSort={sort}
-            onSortChange={handleSortChange}
-          />
+          <FlashcardsListFilters currentSource={source} onFilterChange={handleFilterChange} />
+          <FlashcardsListSorting currentSort={sort} onSortChange={handleSortChange} />
         </div>
       </div>
 
@@ -212,20 +203,12 @@ export function FlashcardsListView() {
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 my-8">
             {flashcards.map((flashcard) => (
-              <FlashcardItem
-                key={flashcard.id}
-                flashcard={flashcard}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-              />
+              <FlashcardItem key={flashcard.id} flashcard={flashcard} onEdit={handleEdit} onDelete={handleDelete} />
             ))}
           </div>
 
           <div className="mt-8 flex justify-center">
-            <FlashcardsListPagination
-              meta={pagination}
-              onPageChange={handlePageChange}
-            />
+            <FlashcardsListPagination meta={pagination} onPageChange={handlePageChange} />
           </div>
         </>
       )}
@@ -234,9 +217,9 @@ export function FlashcardsListView() {
         isOpen={editModalOpen}
         onClose={() => setEditModalOpen(false)}
         onSave={handleSave}
-        initialFront={selectedFlashcard?.front ?? ''}
-        initialBack={selectedFlashcard?.back ?? ''}
+        initialFront={selectedFlashcard?.front ?? ""}
+        initialBack={selectedFlashcard?.back ?? ""}
       />
-  </div>
+    </div>
   );
-} 
+}

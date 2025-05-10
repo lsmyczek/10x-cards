@@ -25,14 +25,16 @@
 - back: VARCHAR(500) NOT NULL
 - source: VARCHAR NOT NULL CHECK (source IN ('ai-full', 'ai-edited', 'manual'))
 - created_at: TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
-- updated_at: TIMESTAMP WITH TIME ZONE DEFAULT NOW() 
+- updated_at: TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 - user_id: UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE
 - generation_id: BIGINT REFERENCES generation(id) ON DELETE SET NULL
 
-**Trigger:** 
+**Trigger:**
+
 - Automatically update the `updated_at` column on record updates.
 
 **Indeksy:**
+
 - INDEX na kolumnie user_id
 - INDEX na kolumnie generation_id
 
@@ -55,6 +57,7 @@
 - updated_at: TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 
 **Indeksy:**
+
 - INDEX na kolumnie user_id
 
 ---
@@ -73,6 +76,7 @@
 - created_at: TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 
 **Indeksy:**
+
 - INDEX na kolumnie user_id
 
 ---
@@ -93,13 +97,12 @@ Dla tabel flashcards, generations oraz generations_error_logs należy wdrożyć 
 
 Przykładowa polityka RLS (do wdrożenia jako część migracji):
 
-  CREATE POLICY user_isolation ON <table>
-    FOR ALL
-    USING (user_id = auth.uid());
+CREATE POLICY user_isolation ON <table>
+FOR ALL
+USING (user_id = auth.uid());
 
 ## 5. Dodatkowe uwagi:
 
 - Wszystkie klucze obce posiadają akcję ON DELETE CASCADE dla zachowania spójności danych.
 - Ograniczenia długości dla pól tekstowych są definiowane poprzez typy VARCHAR oraz CHECK constraints.
 - Trigger w tabeli flashcards ma automatycznie aktualizować kolumnę `updated_at` przy każdej modyfikacji rekordu
-

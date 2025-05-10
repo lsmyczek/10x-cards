@@ -19,10 +19,12 @@ Konstruktor usługi będzie przyjmował następujące parametry konfiguracyjne:
 ### Publiczne metody:
 
 1. **sendChatMessage(userMessage: string): Promise<Response>**
+
    - Wysyła komunikat użytkownika wraz z domyślnym komunikatem systemowym do API OpenRouter.
    - Wywołuje wewnętrzne metody budujące payload oraz obsługę błędów.
 
 2. **updateConfiguration(config: Configuration): void**
+
    - Aktualizuje konfigurację usługi (klucz API, endpoint, nazwa modelu, parametry, itd.).
 
 3. **getLastResponse(): Response**
@@ -40,6 +42,7 @@ Konstruktor usługi będzie przyjmował następujące parametry konfiguracyjne:
 ### Prywatne metody:
 
 1. **buildPayload(userMessage: string): object**
+
    - Konstrukuje payload do wysłania, uwzględniając:
      - Komunikat systemowy
      - Komunikat użytkownika
@@ -54,6 +57,7 @@ Konstruktor usługi będzie przyjmował następujące parametry konfiguracyjne:
      5. Parametry modelu: `{ temperature: 0.7, max_tokens: 150 }`
 
 2. **parseResponse(apiResponse: object): object**
+
    - Waliduje i parsuje odpowiedź API według zdefiniowanego JSON Schema.
    - Wykorzystuje bibliotekę walidującą schemat lub własną implementację walidatora.
 
@@ -70,14 +74,17 @@ Konstruktor usługi będzie przyjmował następujące parametry konfiguracyjne:
 Potencjalne scenariusze błędów i ich obsługa:
 
 1. **Błąd sieci (Network Error):**
+
    - Wyzwanie: Niestabilne połączenie, timeout lub brak dostępu do API.
    - Rozwiązanie: Implementacja mechanizmu ponawiania prób (retry) oraz timeoutów.
 
 2. **Błędna konfiguracja (Invalid Configuration):**
+
    - Wyzwanie: Niepoprawny klucz API, błędne endpoint lub niedostateczne parametry modelu.
    - Rozwiązanie: Walidacja konfiguracji przy starcie usługi oraz przy każdej aktualizacji.
 
 3. **Błąd parsowania odpowiedzi (Response Parsing Error):**
+
    - Wyzwanie: Odpowiedź nie odpowiada zdefiniowanemu schematowi JSON.
    - Rozwiązanie: Użycie walidatora schematu i mechanizmów fallback, jeżeli odpowiedź jest niezgodna.
 
@@ -88,12 +95,15 @@ Potencjalne scenariusze błędów i ich obsługa:
 ## 6. Kwestie bezpieczeństwa
 
 1. **Przechowywanie kluczy API:**
+
    - Używanie zmiennych środowiskowych do przechowywania kluczy API.
 
 2. **Walidacja danych wejściowych:**
+
    - Sanityzacja komunikatów użytkownika, aby zapobiec atakom typu injection.
 
 3. **Bezpieczna transmisja danych:**
+
    - Wymuszanie połączeń HTTPS dla wszystkich wywołań API.
 
 4. **Monitorowanie i logowanie:**
@@ -102,27 +112,34 @@ Potencjalne scenariusze błędów i ich obsługa:
 ## 7. Plan wdrożenia krok po kroku
 
 1. **Konfiguracja środowiska:**
+
    - Upewnić się, że wszystkie niezbędne zmienne środowiskowe (API_KEY, API_ENDPOINT) są poprawnie ustawione.
    - Skonfigurować pliki konfiguracyjne oraz system zarządzania konfiguracją w oparciu o obecny stack (Astro, TypeScript, Supabase itp.).
 
 2. **Implementacja modułu OpenRouter API Client:**
+
    - Utworzyć nowy moduł w katalogu `./src/lib` odpowiedzialny za komunikację z OpenRouter API.
    - Zaimplementować metody wysyłania zapytań z obsługą retry, timeout oraz walidacją odpowiedzi.
 
 3. **Implementacja Payload Builder i Response Parser:**
+
    - Utworzyć prywatne metody `buildPayload` oraz `parseResponse` w module klienta.
    - Zaimplementować logikę łączenia komunikatów systemowego i użytkownika oraz dodawania kluczowych elementów (response_format, model name, model parameters).
 
 4. **Konfiguracja formatu odpowiedzi:**
+
    - Ustalić schemat JSON odpowiedzi, np.:
      ```json
-     { "type": "json_schema", "json_schema": { "name": "chat_response", "strict": true, "schema": { "answer": { "type": "string" }, "note": { "type": "string" } } } }
+     {
+       "type": "json_schema",
+       "json_schema": {
+         "name": "chat_response",
+         "strict": true,
+         "schema": { "answer": { "type": "string" }, "note": { "type": "string" } }
+       }
+     }
      ```
    - Wdrożyć walidację opracowanego schematu wewnątrz metody `parseResponse`.
 
 5. **Implementacja obsługi błędów:**
    - Zaimplementować centralną metodę `handleErrors` przechwytującą wszystkie typy błędów (sieciowe, konfiguracji, parsowania, limitowania) i logującą odpowiednie zdarzenia.
-
-
-
- 

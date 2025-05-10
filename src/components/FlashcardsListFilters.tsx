@@ -1,6 +1,6 @@
-import { WandSparkles, PenLine, Sparkles } from 'lucide-react';
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import type { FlashcardSource } from '@/types';
+import { WandSparkles, PenLine, Sparkles } from "lucide-react";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import type { FlashcardSource } from "@/types";
 
 interface FlashcardsListFiltersProps {
   onFilterChange: (source: FlashcardSource | null) => void;
@@ -14,7 +14,7 @@ export function FlashcardsListFilters({ onFilterChange, currentSource }: Flashca
       onFilterChange(null);
       return;
     }
-    
+
     // Convert the value to FlashcardSource type
     onFilterChange(value as FlashcardSource);
   };
@@ -22,7 +22,7 @@ export function FlashcardsListFilters({ onFilterChange, currentSource }: Flashca
   return (
     <ToggleGroup
       type="single"
-      value={currentSource ?? ''}
+      value={currentSource ?? ""}
       variant="outline"
       onValueChange={handleValueChange}
       className="justify-start w-full md:w-auto"
@@ -41,4 +41,4 @@ export function FlashcardsListFilters({ onFilterChange, currentSource }: Flashca
       </ToggleGroupItem>
     </ToggleGroup>
   );
-} 
+}

@@ -1,12 +1,15 @@
 # Plan implementacji widoku listy fiszek
 
 ## 1. Przegląd
+
 Widok listy fiszek ma na celu prezentację zatwierdzonych fiszek użytkownika w sposób przejrzysty i responsywny. Użytkownik widzi fiszki ułożone w trójkolumnowym gridzie, z informacjami o treści "front" i "back" oraz oznaczeniem źródła (AI - wygenerowane lub Manual - dodane ręcznie). Ponadto, widok umożliwia edycję fiszek poprzez modal edycji oraz usuwanie fiszek z systemu.
 
 ## 2. Routing widoku
+
 Widok będzie dostępny pod ścieżką `/flashcards` i będzie widoczny wyłącznie dla zalogowanych użytkowników.
 
 ## 3. Struktura komponentów
+
 - **FlashcardsListView** (główny komponent widoku):
   - Odpowiada za pobranie danych z API, zarządzanie stanem listy fiszek oraz wyświetlenie siatki fiszek.
 - **FlashcardItem** (pojedyncza karta fiszki) - układ taki jak w przpadku komponentu `FlaschcardProposalsItem.tsx`:
@@ -16,10 +19,12 @@ Widok będzie dostępny pod ścieżką `/flashcards` i będzie widoczny wyłącz
 - **FlashcardEditModal** (re-używalny komponent modalny ju stworzony `src/components/FlashcardEditModal.tsx`):
   - Umożliwia edycję wybranej fiszki.
 - **DeleteConfirmationModal**:
-  - Modal do potwierdzenia usunięcia fiszki (po potwierdzeniu następuje usunięcie fiszki). 
+  - Modal do potwierdzenia usunięcia fiszki (po potwierdzeniu następuje usunięcie fiszki).
 
 ## 4. Szczegóły komponentów
+
 ### FlashcardsListView
+
 - **Opis:**
   - Główny komponent pobierający listę fiszek poprzez API GET `/api/flashcards`.
   - Zarządza stanami: lista fiszek, stan ładowania, błędy, widoczność modalu edycji oraz dane fiszki do edycji.
@@ -38,6 +43,7 @@ Widok będzie dostępny pod ścieżką `/flashcards` i będzie widoczny wyłącz
   - Brak bezpośrednich propsów, zarządzanie stanem wewnętrznym.
 
 ### FlashcardCard
+
 - **Opis:**
   - Komponent odpowiedzialny za prezentację pojedynczej fiszki.
 - **Główne elementy:**
@@ -59,6 +65,7 @@ Widok będzie dostępny pod ścieżką `/flashcards` i będzie widoczny wyłącz
   - `onDelete(flashcardId: number)`: funkcja wywoływana przy usuwaniu.
 
 ### FlashcardEditModal
+
 - **Opis:**
   - Modal umożliwiający edycję fiszki, wykorzystuje istniejący komponent `FlashcardEditModal.tsx`.
 - **Główne elementy:**
@@ -78,13 +85,14 @@ Widok będzie dostępny pod ścieżką `/flashcards` i będzie widoczny wyłącz
   - `onClose()`: funkcja zamykająca modal.
 
 ## 5. Typy
+
 - **FlashcardViewModel:**
   ```typescript
   interface FlashcardViewModel {
     id: number;
     front: string;
     back: string;
-    source: 'manual' | 'ai-full' | 'ai-edited';
+    source: "manual" | "ai-full" | "ai-edited";
     created_at: string;
     updated_at: string;
     generation_id: number | null;
@@ -94,6 +102,7 @@ Widok będzie dostępny pod ścieżką `/flashcards` i będzie widoczny wyłącz
   - `FlashcardsListResponseDto`, `UpdateFlashcardCommand` – zgodne z definicjami w `types.ts`.
 
 ## 6. Zarządzanie stanem
+
 - W głównym komponencie `FlashcardsListView` wykorzystamy hooki React (`useState`, `useEffect`) do:
   - Przechowywania stanu listy fiszek.
   - Monitorowania stanu ładowania (loading) i błędów (error).
@@ -101,6 +110,7 @@ Widok będzie dostępny pod ścieżką `/flashcards` i będzie widoczny wyłącz
 - Opcjonalnie stworzymy custom hook `useFlashcards` do enkapsulacji logiki pobierania, aktualizacji i usuwania fiszek.
 
 ## 7. Integracja API
+
 - **Pobieranie fiszek:**
   - Endpoint: GET `/api/flashcards`
   - Typ odpowiedzi: `FlashcardsListResponseDto`
@@ -114,6 +124,7 @@ Widok będzie dostępny pod ścieżką `/flashcards` i będzie widoczny wyłącz
   - Akcja: Po potwierdzeniu usunięcia wysłać żądanie, a następnie usunąć fiszkę ze stanu.
 
 ## 8. Interakcje użytkownika
+
 - Po wejściu na stronę widoku, użytkownik widzi siatkę fiszek.
 - Kliknięcie przycisku Edytuj na pojedynczej fiszce otwiera modal z danymi wybranej fiszki, gdzie użytkownik może wprowadzić zmiany.
 - Kliknięcie przycisku Usuń na pojedynczej fiszce powoduje pojawienie się potwierdzenia modalu umoliwijącym akceptację lub zrezygnowanie z operacji.
@@ -121,6 +132,7 @@ Widok będzie dostępny pod ścieżką `/flashcards` i będzie widoczny wyłącz
 - Po edycji lub usunięciu widok automatycznie odświeża listę.
 
 ## 9. Warunki i walidacja
+
 - Przed wysłaniem żądania edycji walidujemy:
   - Pole `front`: 1-200 znaków, niepuste po trimowaniu.
   - Pole `back`: 1-500 znaków, niepuste po trimowaniu.
@@ -128,23 +140,25 @@ Widok będzie dostępny pod ścieżką `/flashcards` i będzie widoczny wyłącz
 - Walidacja odpowiedzi z API – w przypadku błędów wyświetlamy komunikaty (toast notifications lub alerty).
 
 ## 10. Obsługa błędów
+
 - W przypadku niepowodzenia zapytań do API (GET, PATCH, DELETE):
   - Wyświetlamy odpowiednie komunikaty błędów użytkownikowi (toast, alert).
   - Utrzymujemy stan aplikacji, nie aktualizując listy fiszek, jeśli żądanie zakończy się błędem.
   - Logujemy szczegóły błędu w konsoli (dla celów debugowania).
 
 ## 11. Kroki implementacji
+
 1. Utworzyć komponent `FlashcardsListView` w odpowiednim folderze (np. `src/components`).
 2. W `FlashcardsListView`:
    - Zaimportować i wywołać custom hook lub użyć `useEffect` do pobrania listy fiszek z API (wywołanie API GET).
    - Zaimplementować stany: lista fiszek, loading, error, stan modalu edycji.
-4. Utworzyć komponent `FlashcardItem`:
+3. Utworzyć komponent `FlashcardItem`:
    - Zaimplementować strukturę wizualną (tekst, badge, przyciski) używając Tailwind CSS.
    - Układ taki sam jak w przypadku ju istniejącego komponentu `FlaschcardProposalsItem.tsx`
    - Dodać obsługę zdarzeń: wywołanie edit i delete (przekazane jako propsy).
-5. Zintegrować istniejący komponent `FlashcardEditModal`:
+4. Zintegrować istniejący komponent `FlashcardEditModal`:
    - Zapewnić otwieranie modalu z danymi wybranej fiszki oraz obsługę zatwierdzania zmian (wywołanie API PATCH).
-6. Dla przycisku usuwania:
+5. Dla przycisku usuwania:
    - Dodać akcję potwierdzenia usunięcia (modal).
    - Po potwierdzeniu wysłać żądanie DELETE, zaktualizować stan listy fiszek i wyświetlić toast potwierdzenia.
-7. Uzupełnić obsługę błędów oraz stanów ładowania, wyświetlając odpowiednie komunikaty.
+6. Uzupełnić obsługę błędów oraz stanów ładowania, wyświetlając odpowiednie komunikaty.

@@ -1,8 +1,8 @@
-import type { APIRoute } from 'astro';
-import { createSupabaseServer } from '../../../db/supabase.server';
+import type { APIRoute } from "astro";
+import { createSupabaseServer } from "../../../db/supabase.server";
 
 export const POST: APIRoute = async ({ request, cookies, redirect }) => {
-  const supabase = createSupabaseServer({ 
+  const supabase = createSupabaseServer({
     headers: request.headers,
     cookies,
   });
@@ -11,11 +11,11 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
 
   if (error) {
     // Log the error with relevant context but without sensitive data
-    console.error('Logout failed:', {
+    console.error("Logout failed:", {
       error: error.message,
       timestamp: new Date().toISOString(),
-      path: '/api/auth/logout',
-      statusCode: 400
+      path: "/api/auth/logout",
+      statusCode: 400,
     });
 
     return new Response(JSON.stringify({ error: error.message }), {
@@ -23,5 +23,5 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
     });
   }
 
-  return redirect('/', 302);
-}; 
+  return redirect("/", 302);
+};

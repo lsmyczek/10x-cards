@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import { supabase } from "../../db/supabase.client";
 
-export const GET: APIRoute = async ({ url, cookies, redirect }) => {
+export const GET: APIRoute = async ({ url, redirect }) => {
   const code = url.searchParams.get("code");
 
   if (!code) {
@@ -23,4 +23,4 @@ export const GET: APIRoute = async ({ url, cookies, redirect }) => {
 };
 
 // Required for Astro SSR
-export const prerender = false; 
+export const prerender = false;

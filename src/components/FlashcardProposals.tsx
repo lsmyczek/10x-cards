@@ -1,5 +1,5 @@
-import type { FlashcardProposalViewModel } from './FlashcardGenerator';
-import { FlashcardProposalsItem } from './FlashcardProposalsItem';
+import type { FlashcardProposalViewModel } from "./FlashcardGenerator";
+import { FlashcardProposalsItem } from "./FlashcardProposalsItem";
 
 interface FlashcardProposalsProps {
   flashcards: FlashcardProposalViewModel[];
@@ -14,16 +14,16 @@ export function FlashcardProposals({ flashcards, onAccept, onReject, onEdit }: F
   }
 
   return (
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {flashcards.map((flashcard) => (
-          <FlashcardProposalsItem
-            key={flashcard.id}
-            flashcard={flashcard}
-            onAccept={onAccept}
-            onReject={onReject}
-            onEdit={onEdit}
-          />
-        ))}
-      </div>
+    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {flashcards.map((flashcard) => (
+        <FlashcardProposalsItem
+          key={flashcard.id}
+          flashcard={flashcard}
+          onAccept={onAccept}
+          onReject={onReject}
+          onEdit={onEdit}
+        />
+      ))}
+    </div>
   );
-} 
+}

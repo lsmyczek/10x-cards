@@ -7,6 +7,7 @@ Usługa OpenRouter integruje się z API OpenRouter w celu uzupełnienia czatów 
 ### Kluczowe komponenty:
 
 1. **OpenRouter API Client**
+
    - Funkcjonalność: Komunikacja z API OpenRouter; wykonywanie zapytań z poprawnie sformatowanym payload.
    - Potencjalne wyzwania:
      1. Niezawodność połączenia sieciowego i timeouty.
@@ -18,6 +19,7 @@ Usługa OpenRouter integruje się z API OpenRouter w celu uzupełnienia czatów 
      3. Użycie walidacji JSON schema do weryfikacji response_format.
 
 2. **Chat Context Manager**
+
    - Funkcjonalność: Zarządzanie historią czatu, budowanie kontekstu oraz tworzenie payload dla zapytań.
    - Potencjalne wyzwania:
      1. Utrzymanie spójności danych i poprawne łączenie historii rozmów.
@@ -27,6 +29,7 @@ Usługa OpenRouter integruje się z API OpenRouter w celu uzupełnienia czatów 
      2. Regularna walidacja i czyszczenie danych kontekstowych.
 
 3. **Response Processor**
+
    - Funkcjonalność: Analiza odpowiedzi z API, walidacja schematu (response_format) oraz ekstrakcja użytecznych danych.
    - Potencjalne wyzwania:
      1. Niezgodność formatu odpowiedzi względem oczekiwanej struktury.
@@ -48,6 +51,7 @@ Usługa OpenRouter integruje się z API OpenRouter w celu uzupełnienia czatów 
 ## 2. Opis konstruktora
 
 Constructor usługi (np. OpenRouterService) będzie odpowiedzialny za inicjalizację podstawowych ustawień, takich jak:
+
 - apiKey oraz apiEndpoint
 - Domyślny system prompt (np. "You are a helpful assistant.")
 - Nazwa modelu do użycia (np. "gpt-4")
@@ -66,6 +70,7 @@ Constructor usługi (np. OpenRouterService) będzie odpowiedzialny za inicjaliza
    - Umożliwia aktualizację domyślnych parametrów modelu.
 
 **Pola:**
+
 - apiKey: string
 - apiEndpoint: string
 - systemPrompt: string
@@ -77,22 +82,23 @@ Constructor usługi (np. OpenRouterService) będzie odpowiedzialny za inicjaliza
 
 **Metody:**
 
-1. _buildRequestPayload(userMessage: string): object
+1. \_buildRequestPayload(userMessage: string): object
    - Buduje strukturę zapytania zawierającą:
      a. Komunikat systemowy (np. "You are a helpful assistant.")
      b. Komunikat użytkownika (otrzymany jako argument)
      c. Response format, np.:
-        { type: 'json_schema', json_schema: { name: 'chatCompletion', strict: true, schema: { result: 'string', details: 'object' } } }
+     { type: 'json_schema', json_schema: { name: 'chatCompletion', strict: true, schema: { result: 'string', details: 'object' } } }
      d. Nazwa modelu (np. "gpt-4")
      e. Parametry modelu (np. { temperature: 0.7, max_tokens: 150 })
-2. _parseResponse(response: any): any
+2. \_parseResponse(response: any): any
    - Analizuje odpowiedź API, waliduje ją przy pomocy JSON schema oraz wyodrębnia niezbędne dane.
-3. _handleError(error: Error): void
+3. \_handleError(error: Error): void
    - Centralny mechanizm obsługi błędów, który loguje błąd i wykonuje odpowiednie akcje naprawcze.
 
 **Pola:**
-- _timeoutDuration: number – czas oczekiwania na odpowiedź API
-- _internalErrorQueue: Array<Error> – kolejka błędów do dalszej analizy i logowania
+
+- \_timeoutDuration: number – czas oczekiwania na odpowiedź API
+- \_internalErrorQueue: Array<Error> – kolejka błędów do dalszej analizy i logowania
 
 ## 5. Obsługa błędów
 
@@ -120,30 +126,34 @@ Dla powyższych scenariuszy proponujemy:
 ## 7. Plan wdrożenia krok po kroku
 
 1. **Konfiguracja środowiska:**
+
    - Ustawienie zmiennych środowiskowych (np. API_KEY, API_ENDPOINT).
    - Instalacja wymaganych zależności zgodnie z technologią: Astro 5, TypeScript 5, React 19, Tailwind 4, Shadcn/ui.
 
 2. **Implementacja modułu OpenRouterService:**
+
    - Zdefiniowanie konstruktora i inicjalizacja kluczowych pól (apiKey, apiEndpoint, systemPrompt, modelName, modelParameters).
 
 3. **Implementacja metod publicznych:**
+
    - Utworzenie metody sendMessage, która buduje payload, wysyła zapytanie i obsługuje odpowiedź.
    - Implementacja metody getChatHistory oraz updateModelParameters.
 
 4. **Implementacja metod prywatnych:**
-   - Budowa metody _buildRequestPayload, uwzględniającej:
+
+   - Budowa metody \_buildRequestPayload, uwzględniającej:
      a. Komunikat systemowy: "You are a helpful assistant."
      b. Komunikat użytkownika: dynamicznie przekazywany na podstawie inputu.
      c. Response format: { type: 'json_schema', json_schema: { name: 'chatCompletion', strict: true, schema: { result: 'string', details: 'object' } } }
      d. Nazwa modelu: np. "gpt-4"
      e. Parametry modelu: np. { temperature: 0.7, max_tokens: 150 }
-   - Utworzenie metody _parseResponse z walidacją struktury odpowiedzi.
+   - Utworzenie metody \_parseResponse z walidacją struktury odpowiedzi.
 
 5. **Wdrożenie systemu obsługi błędów:**
-   - Implementacja _handleError z mechanizmami retry i loggingiem.
+
+   - Implementacja \_handleError z mechanizmami retry i loggingiem.
    - Testowanie scenariuszy błędów (timeout, błędna autoryzacja, niezgodna struktura odpowiedzi).
 
 6. **Integracja z komponentami frontendowymi:**
    - Połączenie z interfejsem czatu opartego na React 19 i Shadcn/ui.
    - Upewnienie się, że zachowanie usługi jest zgodne z oczekiwaniami UX.
- 

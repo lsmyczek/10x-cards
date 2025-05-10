@@ -25,22 +25,26 @@
 ## Getting Started Locally
 
 1. **Clone the repository**:
+
    ```sh
    git clone https://github.com/lsmyczek/10x-cards.git
    cd 10x-cards
    ```
 
 2. **Set the Node version** (as specified in `.nvmrc`). Current version **22.14.0**:
+
    ```sh
    nvm use
    ```
 
 3. **Install dependencies**:
+
    ```sh
    npm install
    ```
 
 4. **Start the development server**:
+
    ```sh
    npm run dev
    ```
@@ -76,4 +80,4 @@ This is an early-stage MVP of the 10x-cards project, currently under active deve
 
 ## License
 
-This project is licensed under the MIT License. 
+This project is licensed under the MIT License.

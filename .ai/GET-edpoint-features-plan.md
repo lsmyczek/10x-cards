@@ -15,6 +15,7 @@ This document outlines the plan for enhancing the `GET /api/flashcards` endpoint
 ## 2. Update the FlashcardsService.getFlashcards Method
 
 - **Pagination:**
+
   - Compute the `offset` using the formula:
     \[
     offset = (page - 1) \times limit
@@ -22,10 +23,12 @@ This document outlines the plan for enhancing the `GET /api/flashcards` endpoint
   - Use SQL `LIMIT` and `OFFSET` to fetch the appropriate slice of flashcards.
 
 - **Sorting:**
+
   - Construct an `ORDER BY` clause using the provided `sort` and `order` parameters.
   - Validate that only allowed fields are used for sorting to prevent SQL injection.
 
 - **Filtering:**
+
   - If a `source` parameter is provided, include a `WHERE` clause to filter flashcards by that source.
   - Plan for additional filtering options in the future if needed.
 
@@ -45,9 +48,12 @@ This document outlines the plan for enhancing the `GET /api/flashcards` endpoint
   - `pages`: Total number of pages.
 
 Example response structure:
+
 ```json
 {
-  "data": [ /* flashcards array */ ],
+  "data": [
+    /* flashcards array */
+  ],
   "meta": {
     "total": 120,
     "page": 2,
@@ -59,12 +65,10 @@ Example response structure:
 
 - Maintain error handling and appropriate status codes (e.g., 400 for bad requests, 500 for internal server errors).
 
-
 ## 4. Database Considerations
 
 - Ensure there are appropriate indexes on the columns used for sorting and filtering (`created_at`, `updated_at`, `source`) to optimize query performance.
 
-
 ## Conclusion
 
-Implementing these enhancements will improve the robustness and usability of the flashcards endpoint, enabling clients to efficiently paginate, sort, and filter flashcard data. 
+Implementing these enhancements will improve the robustness and usability of the flashcards endpoint, enabling clients to efficiently paginate, sort, and filter flashcard data.

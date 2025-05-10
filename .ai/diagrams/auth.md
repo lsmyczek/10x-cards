@@ -1,9 +1,10 @@
 <authentication_analysis>
+
 - Przepływy autentykacji z dokumentów:
-  • Rejestracja: Użytkownik wysyła dane rejestracyjne; API komunikuje się z Supabase Auth, 
-    który tworzy konto i zwraca token.
-  • Logowanie: Użytkownik podaje email i hasło; API weryfikuje dane przez Supabase Auth 
-    i wydaje token sesji.
+  • Rejestracja: Użytkownik wysyła dane rejestracyjne; API komunikuje się z Supabase Auth,
+  który tworzy konto i zwraca token.
+  • Logowanie: Użytkownik podaje email i hasło; API weryfikuje dane przez Supabase Auth
+  i wydaje token sesji.
   • Reset hasła: Użytkownik wysyła email; API inicjuje wysłanie linku do resetu hasła.
   • Wylogowanie: Użytkownik wysyła żądanie wylogowania; API inwaliduje token.
 - Główni aktorzy:
@@ -14,9 +15,10 @@
 - Procesy:
   • Weryfikacja tokenu: Każde żądanie do chronionego zasobu weryfikowane jest przez API.
   • Odświeżanie tokenu: W przypadku wygaśnięcia tokenu, API odświeża go przez Supabase Auth.
-</authentication_analysis>
+  </authentication_analysis>
 
 <mermaid_diagram>
+
 ```mermaid
 sequenceDiagram
   autonumber
@@ -93,4 +95,5 @@ sequenceDiagram
   "Astro API"-->> Browser: Przekierowanie do logowania
   deactivate "Astro API"
 ```
-</mermaid_diagram> 
+
+</mermaid_diagram>

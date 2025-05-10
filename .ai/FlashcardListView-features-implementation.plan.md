@@ -3,10 +3,12 @@
 This document defines the steps required to enhance the `FlashcardsListView.tsx` React typescript component by integrating sorting, filtering, and pagination functionalities as per the enhancements outlined in `.ai/GET-edpoint-features-plan.md`.
 
 ## 1. Overview
+
 - Enhance the `FlashcardsListView` component by adding separate sub-components for Sorting, Filtering, and Pagination.
 - Integrate these components with the GET `/api/flashcards` endpoint to support dynamic querying based on user interactions.
 
 ## 2. Rules of implementation
+
 - **Tech Stack Compliance:**
   - Follow the guidelines for Astro 5, TypeScript 5, React 19, Tailwind 4, and Shadcn/ui.
 - **Coding Practices:**
@@ -16,6 +18,7 @@ This document defines the steps required to enhance the `FlashcardsListView.tsx`
 ## 3. Implementation steps
 
 ### 1. Sorting
+
 - **Component Name:** `FlashcardsListSorting`
 - **UI:** Use the Shadcn/ui `select` component.
 - **Logic:**
@@ -24,6 +27,7 @@ This document defines the steps required to enhance the `FlashcardsListView.tsx`
   - On option change, update the parent state and re-fetch flashcards with the selected sort parameters.
 
 ### 2. Filtering
+
 - **Component Name:** `FlashcardsListFilters`
 - **UI:** Use the Shadcn/ui `toggle group` component with two toggles: "AI" and "Manual".
 - **Logic:**
@@ -33,6 +37,7 @@ This document defines the steps required to enhance the `FlashcardsListView.tsx`
   - On toggle change, update the filter state in the parent component and trigger a re-fetch.
 
 ### 3. Pagination
+
 - **Component Name:** `FlashcardsListPagination`
 - **UI:** Use the Shadcn/ui `pagination` component.
 - **Logic:**
@@ -40,6 +45,7 @@ This document defines the steps required to enhance the `FlashcardsListView.tsx`
   - On page change, update the parent state and re-fetch flashcards with the correct `page` and `limit` parameters.
 
 ### 4. Integration in `FlashcardsListView`
+
 - **State Management:**
   - Manage state for sorting, filtering, and pagination in the `FlashcardsListView` component.
   - Combine these state values to construct the query parameters for API calls to `/api/flashcards`.
@@ -48,5 +54,3 @@ This document defines the steps required to enhance the `FlashcardsListView.tsx`
 - **UI Layout:**
   - Render the new sub-components (Sorting, Filtering, Pagination) in the UI, maintaining a clear and responsive layout using Tailwind CSS.
   - Ensure that loading states and potential error messages are handled gracefully.
-
-

@@ -1,5 +1,5 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { CreateFlashcardsCommand, FlashcardDto, FlashcardsListResponseDto } from '../../types';
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { CreateFlashcardsCommand, FlashcardDto, FlashcardsListResponseDto } from "../../types";
 
 export class FlashcardsService {
   constructor(private readonly supabase: SupabaseClient) {}
@@ -10,21 +10,23 @@ export class FlashcardsService {
    */
   private async verifyGenerationOwnership(generationId: number, userId: string): Promise<void> {
     console.log(`Verifying ownership of generation ${generationId} for user ${userId}`);
-    
+
     const { data: generation, error } = await this.supabase
-      .from('generations')
-      .select('user_id')
-      .eq('id', generationId)
+      .from("generations")
+      .select("user_id")
+      .eq("id", generationId)
       .single();
 
     if (error || !generation) {
       console.error(`Generation ${generationId} not found:`, error);
-      throw new Error('Generation not found');
+      throw new Error("Generation not found");
     }
 
     if (generation.user_id !== userId) {
-      console.warn(`User ${userId} attempted to access generation ${generationId} belonging to user ${generation.user_id}`);
-      throw new Error('Generation does not belong to the user');
+      console.warn(
+        `User ${userId} attempted to access generation ${generationId} belonging to user ${generation.user_id}`
+      );
+      throw new Error("Generation does not belong to the user");
     }
 
     console.log(`Generation ${generationId} ownership verified for user ${userId}`);
@@ -34,18 +36,17 @@ export class FlashcardsService {
    * Creates multiple flashcards in a single transaction
    * @returns Created flashcards and count
    */
-  async createFlashcards(command: CreateFlashcardsCommand, userId: string): Promise<{
+  async createFlashcards(
+    command: CreateFlashcardsCommand,
+    userId: string
+  ): Promise<{
     data: FlashcardDto[];
     meta: { created_count: number };
   }> {
     console.log(`Creating ${command.flashcards.length} flashcards for user ${userId}`);
-    
+
     // Verify all generations belong to the user
-    const generationIds = [...new Set(
-      command.flashcards
-        .filter(f => f.generation_id)
-        .map(f => f.generation_id!)
-    )];
+    const generationIds = [...new Set(command.flashcards.filter((f) => f.generation_id).map((f) => f.generation_id!))];
 
     console.log(`Verifying ownership of ${generationIds.length} generations`);
     for (const generationId of generationIds) {
@@ -53,28 +54,28 @@ export class FlashcardsService {
     }
 
     // Create flashcards in a transaction
-    console.log('Starting flashcard creation transaction');
+    console.log("Starting flashcard creation transaction");
     const { data, error } = await this.supabase
-      .from('flashcards')
+      .from("flashcards")
       .insert(
-        command.flashcards.map(flashcard => ({
+        command.flashcards.map((flashcard) => ({
           ...flashcard,
-          user_id: userId
+          user_id: userId,
         }))
       )
-      .select('id, front, back, source, created_at, updated_at, generation_id');
+      .select("id, front, back, source, created_at, updated_at, generation_id");
 
     if (error) {
-      console.error('Failed to create flashcards:', error);
-      throw new Error('Failed to create flashcards: ' + error.message);
+      console.error("Failed to create flashcards:", error);
+      throw new Error("Failed to create flashcards: " + error.message);
     }
 
     console.log(`Successfully created ${data.length} flashcards`);
     return {
       data: data as FlashcardDto[],
       meta: {
-        created_count: data.length
-      }
+        created_count: data.length,
+      },
     };
   }
 
@@ -83,19 +84,22 @@ export class FlashcardsService {
    * @returns Paginated list of flashcards with metadata
    * @throws {Error} if database query fails
    */
-  async getFlashcards(userId: string, {
-    page = 1,
-    limit = 12,
-    sort = 'created_at',
-    order = 'desc',
-    source
-  }: {
-    page?: number;
-    limit?: number;
-    sort?: 'created_at' | 'updated_at';
-    order?: 'asc' | 'desc';
-    source?: 'manual' | 'ai-full' | 'ai-edited';
-  }): Promise<FlashcardsListResponseDto> {
+  async getFlashcards(
+    userId: string,
+    {
+      page = 1,
+      limit = 12,
+      sort = "created_at",
+      order = "desc",
+      source,
+    }: {
+      page?: number;
+      limit?: number;
+      sort?: "created_at" | "updated_at";
+      order?: "asc" | "desc";
+      source?: "manual" | "ai-full" | "ai-edited";
+    }
+  ): Promise<FlashcardsListResponseDto> {
     console.log(`Fetching flashcards for user ${userId} with params:`, { page, limit, sort, order, source });
 
     try {
@@ -105,29 +109,29 @@ export class FlashcardsService {
 
       // Start building the query
       let query = this.supabase
-        .from('flashcards')
-        .select('id, front, back, source, created_at, updated_at, generation_id', { count: 'exact' })
-        .eq('user_id', userId);
+        .from("flashcards")
+        .select("id, front, back, source, created_at, updated_at, generation_id", { count: "exact" })
+        .eq("user_id", userId);
 
       // Apply source filter if provided
       if (source) {
         console.log(`Applying source filter: ${source}`);
-        query = query.eq('source', source);
+        query = query.eq("source", source);
       }
 
       // Apply sorting with input validation
-      const validSortFields = ['created_at', 'updated_at'] as const;
-      const validOrders = ['asc', 'desc'] as const;
-      
+      const validSortFields = ["created_at", "updated_at"] as const;
+      const validOrders = ["asc", "desc"] as const;
+
       if (!validSortFields.includes(sort as any)) {
-        throw new Error(`Invalid sort field: ${sort}. Must be one of: ${validSortFields.join(', ')}`);
+        throw new Error(`Invalid sort field: ${sort}. Must be one of: ${validSortFields.join(", ")}`);
       }
       if (!validOrders.includes(order as any)) {
-        throw new Error(`Invalid order: ${order}. Must be one of: ${validOrders.join(', ')}`);
+        throw new Error(`Invalid order: ${order}. Must be one of: ${validOrders.join(", ")}`);
       }
 
       console.log(`Applying sorting: ${sort} ${order}`);
-      query = query.order(sort, { ascending: order === 'asc' });
+      query = query.order(sort, { ascending: order === "asc" });
 
       // Apply pagination
       console.log(`Applying pagination range: ${offset} to ${offset + limit - 1}`);
@@ -137,20 +141,20 @@ export class FlashcardsService {
       const { data, error, count } = await query;
 
       if (error) {
-        console.error('Failed to fetch flashcards:', error);
+        console.error("Failed to fetch flashcards:", error);
         throw new Error(`Failed to fetch flashcards: ${error.message}`);
       }
 
       if (!data) {
-        console.warn('No flashcards found for the given criteria');
+        console.warn("No flashcards found for the given criteria");
         return {
           data: [],
           meta: {
             total: 0,
             page,
             limit,
-            pages: 0
-          }
+            pages: 0,
+          },
         };
       }
 
@@ -165,14 +169,12 @@ export class FlashcardsService {
           total: count || 0,
           page,
           limit,
-          pages: totalPages
-        }
+          pages: totalPages,
+        },
       };
     } catch (error) {
-      console.error('Error in getFlashcards:', error);
-      throw error instanceof Error 
-        ? error 
-        : new Error('An unexpected error occurred while fetching flashcards');
+      console.error("Error in getFlashcards:", error);
+      throw error instanceof Error ? error : new Error("An unexpected error occurred while fetching flashcards");
     }
   }
 
@@ -185,38 +187,38 @@ export class FlashcardsService {
 
     // First check if flashcard exists and belongs to the user
     const { data: flashcard, error: findError } = await this.supabase
-      .from('flashcards')
-      .select('user_id, source')
-      .eq('id', id)
+      .from("flashcards")
+      .select("user_id, source")
+      .eq("id", id)
       .single();
 
     if (findError || !flashcard) {
       console.error(`Flashcard ${id} not found:`, findError);
-      throw new Error('Flashcard not found');
+      throw new Error("Flashcard not found");
     }
 
     if (flashcard.user_id !== userId) {
       console.warn(`User ${userId} attempted to update flashcard ${id} belonging to user ${flashcard.user_id}`);
-      throw new Error('Flashcard does not belong to the user');
+      throw new Error("Flashcard does not belong to the user");
     }
 
     // If the source is 'ai-full', update it to 'ai-edited'
     const updateData = {
       ...updates,
-      ...(flashcard.source === 'ai-full' ? { source: 'ai-edited' as const } : {})
+      ...(flashcard.source === "ai-full" ? { source: "ai-edited" as const } : {}),
     };
 
     // Update the flashcard
     const { data: updatedFlashcard, error: updateError } = await this.supabase
-      .from('flashcards')
+      .from("flashcards")
       .update(updateData)
-      .eq('id', id)
-      .select('id, front, back, source, created_at, updated_at, generation_id')
+      .eq("id", id)
+      .select("id, front, back, source, created_at, updated_at, generation_id")
       .single();
 
     if (updateError || !updatedFlashcard) {
       console.error(`Failed to update flashcard ${id}:`, updateError);
-      throw new Error('Failed to update flashcard');
+      throw new Error("Failed to update flashcard");
     }
 
     console.log(`Successfully updated flashcard ${id}`);
@@ -232,32 +234,29 @@ export class FlashcardsService {
 
     // First check if flashcard exists and belongs to the user
     const { data: flashcard, error: findError } = await this.supabase
-      .from('flashcards')
-      .select('user_id')
-      .eq('id', id)
+      .from("flashcards")
+      .select("user_id")
+      .eq("id", id)
       .single();
 
     if (findError || !flashcard) {
       console.error(`Flashcard ${id} not found:`, findError);
-      throw new Error('Flashcard not found');
+      throw new Error("Flashcard not found");
     }
 
     if (flashcard.user_id !== userId) {
       console.warn(`User ${userId} attempted to delete flashcard ${id} belonging to user ${flashcard.user_id}`);
-      throw new Error('Flashcard does not belong to the user');
+      throw new Error("Flashcard does not belong to the user");
     }
 
     // Delete the flashcard
-    const { error: deleteError } = await this.supabase
-      .from('flashcards')
-      .delete()
-      .eq('id', id);
+    const { error: deleteError } = await this.supabase.from("flashcards").delete().eq("id", id);
 
     if (deleteError) {
       console.error(`Failed to delete flashcard ${id}:`, deleteError);
-      throw new Error('Failed to delete flashcard');
+      throw new Error("Failed to delete flashcard");
     }
 
     console.log(`Successfully deleted flashcard ${id}`);
   }
-} 
+}

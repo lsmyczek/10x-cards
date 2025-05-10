@@ -1,10 +1,10 @@
-import type { APIRoute } from 'astro';
-import { createSupabaseServer } from '../../../db/supabase.server';
-import { z } from 'zod';
+import type { APIRoute } from "astro";
+import { createSupabaseServer } from "../../../db/supabase.server";
+import { z } from "zod";
 
 const loginSchema = z.object({
-  email: z.string().email('Invalid email format'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  email: z.string().email("Invalid email format"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
 export const prerender = false;
@@ -14,7 +14,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     const body = await request.json();
     const { email, password } = loginSchema.parse(body);
 
-    const supabase = createSupabaseServer({ 
+    const supabase = createSupabaseServer({
       headers: request.headers,
       cookies,
     });
@@ -25,40 +25,40 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     });
 
     if (error) {
-      console.error('Login error:', error);
+      console.error("Login error:", error);
       return new Response(
-        JSON.stringify({ 
-          error: 'Invalid email or password'
+        JSON.stringify({
+          error: "Invalid email or password",
         }),
         { status: 400 }
       );
     }
 
     return new Response(
-      JSON.stringify({ 
+      JSON.stringify({
         user: {
           id: data.user.id,
           email: data.user.email,
-        }
+        },
       }),
       { status: 200 }
     );
   } catch (err) {
-    console.error('Login error:', err);
+    console.error("Login error:", err);
     if (err instanceof z.ZodError) {
       return new Response(
-        JSON.stringify({ 
-          error: err.errors[0].message 
+        JSON.stringify({
+          error: err.errors[0].message,
         }),
         { status: 400 }
       );
     }
-    
+
     return new Response(
-      JSON.stringify({ 
-        error: 'An error occurred during login' 
+      JSON.stringify({
+        error: "An error occurred during login",
       }),
       { status: 500 }
     );
   }
-}; 
+};

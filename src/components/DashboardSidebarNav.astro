@@ -1,5 +1,5 @@
 ---
-import { Badge } from '@/components/ui/badge';
+import { Badge } from "@/components/ui/badge";
 
 interface NavItem {
   label: string;
@@ -17,28 +17,28 @@ const { navItems } = Astro.props as Props;
 const { pathname } = Astro.url;
 
 const isActive = (path: string) => {
-  return pathname === path || pathname.startsWith(path + '/');
+  return pathname === path || pathname.startsWith(path + "/");
 };
 ---
+
 <nav class="flex flex-col gap-6">
-    {navItems.length > 0 && navItems.map((item) => (   
-        <a 
-            href={item.href} 
-            class={`flex items-center gap-2 transition-all duration-200 ${
+  {
+    navItems.length > 0 &&
+      navItems.map((item) => (
+        <a
+          href={item.href}
+          class={`flex items-center gap-2 transition-all duration-200 ${
             isActive(item.href)
-                ? 'text-[#2b84d5] font-medium pointer-events-none'
-                : 'text-muted-foreground hover:text-primary hover:gap-4'
-            }
-            ${item.disabled ? 'pointer-events-none' : ''}
+              ? "text-[#2b84d5] font-medium pointer-events-none"
+              : "text-muted-foreground hover:text-primary hover:gap-4"
+          }
+            ${item.disabled ? "pointer-events-none" : ""}
             `}
-    >
-        <item.icon className="h-4 w-4"/>
-        {item.label}
-        {item.badge && (
-            <Badge className="bg-primary text-white">
-                {item.badge}
-            </Badge>
-        )}
-    </a>
-    ))}
-  </nav>
+        >
+          <item.icon className="h-4 w-4" />
+          {item.label}
+          {item.badge && <Badge className="bg-primary text-white">{item.badge}</Badge>}
+        </a>
+      ))
+  }
+</nav>

@@ -1,13 +1,13 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
-import { FlashcardAddModal } from './FlashcardAddModal';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import { FlashcardAddModal } from "./FlashcardAddModal";
 
 export function AddFlashcard() {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <>
-      <Button 
+      <Button
         onClick={() => setIsOpen(true)}
         variant="navigation"
         // size="sm"
@@ -17,10 +17,7 @@ export function AddFlashcard() {
         Add Flashcard
       </Button>
 
-      <FlashcardAddModal 
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-      />
+      <FlashcardAddModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
     </>
   );
-} 
+}

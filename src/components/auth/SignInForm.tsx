@@ -9,8 +9,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 
 const loginSchema = z.object({
-  email: z.string().email('Invalid email format'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  email: z.string().email("Invalid email format"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
@@ -33,10 +33,10 @@ export function SignInForm() {
       setIsLoading(true);
       setError(null);
 
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
       });
@@ -44,13 +44,13 @@ export function SignInForm() {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to sign in');
+        throw new Error(result.error || "Failed to sign in");
       }
 
       // Redirect to dashboard on success
-      window.location.href = '/dashboard';
+      window.location.href = "/dashboard";
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setIsLoading(false);
     }
@@ -63,7 +63,7 @@ export function SignInForm() {
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
-      
+
       <div className="flex flex-col gap-2">
         <Label htmlFor="email">Email</Label>
         <div className="relative">
@@ -71,15 +71,13 @@ export function SignInForm() {
           <Input
             id="email"
             type="email"
-            {...register('email')}
+            {...register("email")}
             placeholder="Enter your email"
             className="pl-10"
-            aria-invalid={errors.email ? 'true' : 'false'}
+            aria-invalid={errors.email ? "true" : "false"}
           />
         </div>
-        {errors.email && (
-          <p className="text-sm text-destructive">{errors.email.message}</p>
-        )}
+        {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
       </div>
 
       <div className="flex flex-col gap-2">
@@ -89,10 +87,10 @@ export function SignInForm() {
           <Input
             id="password"
             type={showPassword ? "text" : "password"}
-            {...register('password')}
+            {...register("password")}
             placeholder="Enter your password"
             className="pl-10 pr-10"
-            aria-invalid={errors.password ? 'true' : 'false'}
+            aria-invalid={errors.password ? "true" : "false"}
           />
           <button
             type="button"
@@ -103,20 +101,17 @@ export function SignInForm() {
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
         </div>
-        {errors.password && (
-          <p className="text-sm text-destructive">{errors.password.message}</p>
-        )}
+        {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
       </div>
 
       <div className="flex justify-between items-center text-sm">
         <a href="/auth/reset-password" className="text-primary hover:underline">
           Forgot password?
         </a>
-
       </div>
 
       <Button type="submit" size="lg" className="w-full mt-2" disabled={isLoading}>
-        {isLoading ? 'Signing in...' : 'Sign In'}
+        {isLoading ? "Signing in..." : "Sign In"}
       </Button>
       <div className="flex justify-center items-center mt-2">
         <a href="/auth/sign-up" className="text-sm  hover:underline">
@@ -125,4 +120,4 @@ export function SignInForm() {
       </div>
     </form>
   );
-} 
+}

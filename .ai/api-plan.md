@@ -10,11 +10,13 @@
 ## 2. Endpoints
 
 ### Authentication Endpoints
+
 Authentication will be handled directly by Supabase Auth API on the client side.
 
 ### Flashcards
 
 #### GET /api/flashcards
+
 - **Description**: Retrieve a list of user's flashcards
 - **Query Parameters**:
   - `page` (integer): Page number for pagination
@@ -50,6 +52,7 @@ Authentication will be handled directly by Supabase Auth API on the client side.
   - 500 Internal Server Error
 
 #### GET /api/flashcards/:id
+
 - **Description**: Retrieve a specific flashcard by ID
 - **Response**:
   ```json
@@ -71,6 +74,7 @@ Authentication will be handled directly by Supabase Auth API on the client side.
   - 500 Internal Server Error
 
 #### POST /api/flashcards
+
 - **Description**: Create one or more flashcards (manually or from AI generation)
 - **Request**:
   ```json
@@ -113,6 +117,7 @@ Authentication will be handled directly by Supabase Auth API on the client side.
   - 500 Internal Server Error
 
 #### PATCH /api/flashcards/:id
+
 - **Description**: Update an existing flashcard
 - **Request**:
   ```json
@@ -142,6 +147,7 @@ Authentication will be handled directly by Supabase Auth API on the client side.
   - 500 Internal Server Error
 
 #### DELETE /api/flashcards/:id
+
 - **Description**: Delete a flashcard
 - **Response**: No content
 - **Success**: 204 No Content
@@ -154,11 +160,12 @@ Authentication will be handled directly by Supabase Auth API on the client side.
 ### Generations
 
 #### POST /api/generations
+
 - **Description**: Generate flashcards proposals from source text using AI
 - **Request**:
   ```json
   {
-    "source_text": "string (1000-10000 chars)",
+    "source_text": "string (1000-10000 chars)"
   }
   ```
 - **Response**:
@@ -189,6 +196,7 @@ Authentication will be handled directly by Supabase Auth API on the client side.
   - 503 Service Unavailable: AI service temporarily unavailable - AI Service Error (logs recorder in `generation_error_logs`)
 
 #### GET /api/generations
+
 - **Description**: Retrieve a list of user's generation attempts
 - **Query Parameters**:
   - `page` (integer): Page number for pagination
@@ -223,6 +231,7 @@ Authentication will be handled directly by Supabase Auth API on the client side.
   - 500 Internal Server Error
 
 #### GET /api/generations/:id
+
 - **Description**: Retrieve details of a specific generation
 - **Response**:
   ```json
@@ -245,9 +254,9 @@ Authentication will be handled directly by Supabase Auth API on the client side.
   - 404 Not Found: Generation does not exist
   - 500 Internal Server Error
 
-
 #### GET /api/generations-error-logs
-*(Generation Error Logs Endpoint - Typically restricted to admin or for debugging purposes)*
+
+_(Generation Error Logs Endpoint - Typically restricted to admin or for debugging purposes)_
 
 - **Method**: GET
 - **URL**: /generations-error-logs
@@ -256,9 +265,6 @@ Authentication will be handled directly by Supabase Auth API on the client side.
 - **Success Code**: 200 OK
 - **Error Codes**: 401 Unauthorized (if access is restricted)
 
-
-
-
 ## 3. Authentication and Authorization
 
 Authentication will be handled by Supabase Auth, which provides:
@@ -266,13 +272,16 @@ Authentication will be handled by Supabase Auth, which provides:
 1. **JWT Tokens**: After successful authentication, clients receive a JWT token that must be included in the Authorization header for all API requests.
 
 2. **Authorization Flow**:
+
    - Frontend authenticates directly with Supabase Auth API
    - Supabase provides JWT token upon successful authentication
    - All subsequent API requests include the JWT token in the Authorization header
    - Backend validates the JWT token and identifies the user
      ```
 
-4. **API Endpoint Authorization**:
+     ```
+
+3. **API Endpoint Authorization**:
    - Every API endpoint checks if the request is authenticated
    - For resource-specific endpoints (GET, PATCH, DELETE), the server verifies that the requested resource belongs to the authenticated user
 
@@ -280,28 +289,30 @@ Authentication will be handled by Supabase Auth, which provides:
 
 ### Validation Rules
 
-
 #### Flashcards
-  - `front`: Required, up to 200 characters.
-  - `back`: Required, up to 500 characters.
-  - `source`: Must be one of `ai-edited`, or `manual`.
+
+- `front`: Required, up to 200 characters.
+- `back`: Required, up to 500 characters.
+- `source`: Must be one of `ai-edited`, or `manual`.
 
 #### Generation Request
-  - `source_text`: Required, length between 1000 and 10000 characters.
-  - `model`: Optional, but if provided, must match recognized model names.
 
+- `source_text`: Required, length between 1000 and 10000 characters.
+- `model`: Optional, but if provided, must match recognized model names.
 
 ### Business Logic Implementation
 
 1. **AI Flashcard Generation**:
+
    - The backend receives source text and validates length requirements
    - Text is sent to the AI model via Openrouter.ai
    - Generated flashcard proposals are stored in the database with source = 'ai-full'
    - Generation metadata is stored (time taken, model used, etc.) and flashcard proposals are return to the user.
    - Error handling captures and logs any failures in the AI processing (`generation_error_logs`)
-   - For flashcards generated by AI, allow endpoints to update them (e.g., accepting or editing generated  flashcards by switching the `source` from `ai-full` to `ai-edited`).
+   - For flashcards generated by AI, allow endpoints to update them (e.g., accepting or editing generated flashcards by switching the `source` from `ai-full` to `ai-edited`).
 
 2. **Flashcard Approval Process**:
+
    - Frontend displays generated flashcards proposals for user review
    - User can approve flashcards proposals as-is or edit them before approval
    - Approved flashcards are marked as 'ai-full' (unedited) or 'ai-edited' (modified)
@@ -310,4 +321,3 @@ Authentication will be handled by Supabase Auth, which provides:
 
 3. **GenerationErrorLogs**
    - Error handling and logging are integrated into the AI generation process, with failures recorded in the `generation_error_logs`.
- 

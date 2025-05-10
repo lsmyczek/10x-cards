@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Check, X, Pencil, Trash } from 'lucide-react';
-import type { FlashcardProposalViewModel } from './FlashcardGenerator';
-import { FlashcardEditModal } from './FlashcardEditModal';
-import { cn } from '@/lib/utils';
+import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Check, X, Pencil, Trash } from "lucide-react";
+import type { FlashcardProposalViewModel } from "./FlashcardGenerator";
+import { FlashcardEditModal } from "./FlashcardEditModal";
+import { cn } from "@/lib/utils";
 
 interface FlashcardProposalsItemProps {
   flashcard: FlashcardProposalViewModel;
@@ -16,13 +16,10 @@ interface FlashcardProposalsItemProps {
 export function FlashcardProposalsItem({ flashcard, onAccept, onReject, onEdit }: FlashcardProposalsItemProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  const cardClassName = cn(
-    'transition-colors duration-200',
-    {
-      'border-green-300 bg-gradient-to-tr from-white to-green-100 ': flashcard.accepted,
-      'border-red-300 bg-gradient-to-tr from-white to-red-100': !flashcard.accepted && flashcard.rejected,
-    }
-  );
+  const cardClassName = cn("transition-colors duration-200", {
+    "border-green-300 bg-gradient-to-tr from-white to-green-100 ": flashcard.accepted,
+    "border-red-300 bg-gradient-to-tr from-white to-red-100": !flashcard.accepted && flashcard.rejected,
+  });
 
   return (
     <>
@@ -33,7 +30,7 @@ export function FlashcardProposalsItem({ flashcard, onAccept, onReject, onEdit }
               <h3 className="text-lg font-bold mb-2">Front:</h3>
               <p className="text-muted-foreground">{flashcard.front}</p>
             </div>
-            
+
             <div>
               <h3 className="text-lg font-bold mb-2">Back:</h3>
               <p className="text-muted-foreground">{flashcard.back}</p>
@@ -49,7 +46,7 @@ export function FlashcardProposalsItem({ flashcard, onAccept, onReject, onEdit }
                 <Pencil className="h-4 w-4 mr-2" />
                 Edit
               </Button>
-              
+
               <Button
                 variant={flashcard.rejected ? "reject" : "outline-reject"}
                 size="sm"
@@ -57,9 +54,9 @@ export function FlashcardProposalsItem({ flashcard, onAccept, onReject, onEdit }
                 disabled={flashcard.accepted}
               >
                 <Trash className="h-4 w-4 mr-2" />
-                {flashcard.rejected ? 'Rejected' : 'Reject'}
+                {flashcard.rejected ? "Rejected" : "Reject"}
               </Button>
-              
+
               <Button
                 variant={flashcard.accepted ? "accept" : "outline-accept"}
                 size="sm"
@@ -67,7 +64,7 @@ export function FlashcardProposalsItem({ flashcard, onAccept, onReject, onEdit }
                 disabled={flashcard.rejected}
               >
                 <Check className="h-4 w-4 mr-2" />
-                {flashcard.accepted ? 'Accepted' : 'Accept'}
+                {flashcard.accepted ? "Accepted" : "Accept"}
               </Button>
             </div>
           </div>
@@ -86,4 +83,4 @@ export function FlashcardProposalsItem({ flashcard, onAccept, onReject, onEdit }
       />
     </>
   );
-} 
+}

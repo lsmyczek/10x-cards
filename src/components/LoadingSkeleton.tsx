@@ -1,10 +1,10 @@
-import { Card, CardContent, CardHeader, CardFooter } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function LoadingSkeleton() {
   return (
     <div className=" py-8 flex flex-col gap-8">
-    <Skeleton className="h-20 w-full" />
+      <Skeleton className="h-20 w-full" />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {Array.from({ length: 6 }).map((_, index) => (
           <Card key={index} className="w-full py-6">
@@ -32,4 +32,4 @@ export function LoadingSkeleton() {
       </div>
     </div>
   );
-} 
+}

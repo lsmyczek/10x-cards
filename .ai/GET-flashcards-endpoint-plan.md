@@ -1,9 +1,11 @@
 # API Endpoint Implementation Plan: GET /api/flashcards
 
 ## 1. Przegląd punktu końcowego
+
 Endpoint służy do pobierania listy fiszek powiązanych z aktualnie zalogowanym użytkownikiem. Umożliwia filtrowanie, sortowanie oraz paginację wyników, co pozwala na efektywne zarządzanie danymi przy dużej liczbie rekordów.
 
 ## 2. Szczegóły żądania
+
 - **Metoda HTTP**: GET
 - **Struktura URL**: `/api/flashcards`
 - **Parametry zapytania**:
@@ -15,12 +17,14 @@ Endpoint służy do pobierania listy fiszek powiązanych z aktualnie zalogowanym
 - **Request Body**: Brak
 
 ## 3. Wykorzystywane typy
+
 - **FlashcardDto** – DTO reprezentujący pojedynczą fiszkę.
 - **PaginationMetaDto** – DTO przechowujący informacje o paginacji (total, page, limit, pages).
 - **FlashcardsListResponseDto** – Struktura odpowiedzi zawierająca listę fiszek oraz metadane paginacji.
 - **Schemat walidacji Zod** – Do walidacji parametrów zapytania (page, limit, sort, order, source).
 
 ## 4. Szczegóły odpowiedzi
+
 - **Status 200 OK**
   - **Treść odpowiedzi (JSON)**:
     ```json
@@ -50,50 +54,55 @@ Endpoint służy do pobierania listy fiszek powiązanych z aktualnie zalogowanym
   - **500 Internal Server Error** – Błąd wewnętrzny serwera, np. związany z zapytaniem do bazy danych.
 
 ## 5. Przepływ danych
-1. **Autoryzacja**:  
+
+1. **Autoryzacja**:
    - Middleware autoryzacyjne sprawdza token użytkownika i wyodrębnia `userId`. Autoryzacja zostanie dodana na późniejszym etapie - W tej implementecji korzystamy z domyślnego uytkownika (DEFAULT_USER_ID), który jest ju zdefiniowany w middleware.
-2. **Walidacja parametrów**:  
+2. **Walidacja parametrów**:
    - Przy użyciu Zod sprawdzamy, czy parametry zapytania (page, limit, sort, order, source) są poprawne. Na przykład, parametr `limit` musi być liczbą nieprzekraczającą 100.
-3. **Pobieranie danych**:  
+3. **Pobieranie danych**:
    - FlashcardsService (rozszerzony o metodę `getFlashcards`) wykonuje zapytanie do tabeli `flashcards` w Supabase:
      - Filtrowanie według `user_id = <userId>`.
      - Dodatkowe filtrowanie po parametrze `source` (jeśli jest podany).
      - Sortowanie wyników wg. wybranego pola (`created_at` lub `updated_at`) i kolejność (`asc`/`desc`).
-     - Zastosowanie paginacji (offset = (page - 1) * limit, limit).
-4. **Odpowiedź**:  
+     - Zastosowanie paginacji (offset = (page - 1) \* limit, limit).
+4. **Odpowiedź**:
    - Wyniki zapytania są formatowane zgodnie z `FlashcardsListResponseDto` i zwracane do klienta w formacie JSON.
 
 ## 6. Względy bezpieczeństwa
-- **Autoryzacja**:  
+
+- **Autoryzacja**:
   - Endpoint dostępny tylko dla zalogowanych użytkowników; middleware sprawdza tożsamość użytkownika.
-- **Row-Level Security (RLS)**:  
+- **Row-Level Security (RLS)**:
   - Polityki RLS w Supabase gwarantują, że użytkownik widzi jedynie swoje fiszki.
-- **Walidacja wejścia**:  
+- **Walidacja wejścia**:
   - Użycie biblioteki Zod do walidacji parametrów zapytania zmniejsza ryzyko błędów i ataków (np. SQL Injection).
-- **Bezpieczne zapytania**:  
-   - Korzystanie z query buildera Supabase, który prawidłowo escape’uje wprowadzone wartości.
+- **Bezpieczne zapytania**:
+  - Korzystanie z query buildera Supabase, który prawidłowo escape’uje wprowadzone wartości.
 
 ## 7. Obsługa błędów
-- **401 Unauthorized**:  
+
+- **401 Unauthorized**:
   - Zwracane, jeśli użytkownik nie jest uwierzytelniony.
-- **400 Bad Request**:  
+- **400 Bad Request**:
   - Zwracane, gdy parametry zapytania są nieprawidłowe lub nie spełniają wymagań walidacyjnych.
-- **500 Internal Server Error**:  
+- **500 Internal Server Error**:
   - Zwracane przy błędach podczas operacji na bazie danych lub innych nieoczekiwanych problemach serwera.
-- **Logowanie błędów**:  
+- **Logowanie błędów**:
   - Każdy błąd powinien być logowany (np. do konsoli lub systemu logowania) w celu ułatwienia debugowania oraz monitorowania.
 
 ## 8. Rozważenia dotyczące wydajności
-- **Pagination**:  
+
+- **Pagination**:
   - Używanie paginacji zapobiega pobieraniu nadmiernie dużej liczby rekordów jednocześnie.
-- **Indeksy bazy danych**:  
+- **Indeksy bazy danych**:
   - Zapytania korzystają z indeksu na kolumnie `user_id`, co przyspiesza wyszukiwanie.
-- **Optymalizacja zapytań**:  
+- **Optymalizacja zapytań**:
   - Filtrowanie, sortowanie i paginacja zostaną wykonane na poziomie bazy danych, minimalizując obciążenie aplikacji.
-- **Cache’owanie (opcjonalnie)**:  
+- **Cache’owanie (opcjonalnie)**:
   - Ewentualna implementacja cache’owania odpowiedzi dla zmniejszenia liczby zapytań do bazy, w przypadku dużej liczby żądań.
 
 ## 9. Etapy wdrożenia
+
 1. **Konfiguracja środowiska i autoryzacji**:
    - Na tym etapie korzystamy z domyślnego usera `DEFAULT_USER_ID`, który jest zdefiniowany w middleware. Autoryzacją zajmiemy się na późniejszym etapie.
 2. **Implementacja walidacji parametrów**:

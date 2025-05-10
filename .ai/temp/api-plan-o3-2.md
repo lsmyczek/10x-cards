@@ -16,6 +16,7 @@
 ### Flashcards
 
 #### GET /api/flashcards
+
 - **Description**: Retrieve a paginated list of flashcards for the authenticated user.
 - **Query Parameters**:
   - `page` (integer): Page number for pagination (default: 1).
@@ -51,6 +52,7 @@
   - 500 Internal Server Error
 
 #### GET /api/flashcards/:id
+
 - **Description**: Retrieve a specific flashcard by its ID (accessible only if owned by the authenticated user).
 - **Response Structure**:
   ```json
@@ -71,6 +73,7 @@
   - 404 Not Found
 
 #### POST /api/flashcards
+
 - **Description**: Create a new flashcard manually.
 - **Request Payload**:
   ```json
@@ -98,6 +101,7 @@
   - 401 Unauthorized
 
 #### PATCH /api/flashcards/:id
+
 - **Description**: Update an existing flashcard. Allows partial updates of the `front` and/or `back` fields.
 - **Request Payload**:
   ```json
@@ -126,6 +130,7 @@
   - 404 Not Found
 
 #### DELETE /api/flashcards/:id
+
 - **Description**: Delete a flashcard.
 - **Response**: No content
 - **Success**: 204 No Content
@@ -137,6 +142,7 @@
 ### Generations
 
 #### POST /api/generations
+
 - **Description**: Submit a request to generate flashcards from provided source text using AI.
 - **Request Payload**:
   ```json
@@ -172,6 +178,7 @@
   - 503 Service Unavailable (if AI service is down)
 
 #### GET /api/generations
+
 - **Description**: Retrieve a paginated list of flashcard generation operations for the authenticated user.
 - **Query Parameters**:
   - `page` (integer, default: 1)
@@ -205,6 +212,7 @@
   - 401 Unauthorized
 
 #### GET /api/generations/:id
+
 - **Description**: Get detailed information for a specific generation operation.
 - **Response Structure**:
   ```json
@@ -227,6 +235,7 @@
   - 404 Not Found
 
 #### GET /api/generations/:id/flashcards
+
 - **Description**: Retrieve flashcards associated with a specific generation.
 - **Response Structure**:
   ```json
@@ -250,6 +259,7 @@
   - 404 Not Found
 
 #### POST /api/generations/:id/approve
+
 - **Description**: Approve and optionally edit generated flashcards from a generation operation. This registers the flashcards as either unedited (`ai-full`) or edited (`ai-edited`).
 - **Request Payload**:
   ```json
@@ -282,7 +292,6 @@
   - 403 Forbidden
   - 404 Not Found
 
-
 ## 3. Authentication and Authorization
 
 - **Mechanism**: The API uses Supabase Auth for authentication. Clients obtain a JWT token upon successful login. Every protected endpoint must include the JWT token in the `Authorization` header.
@@ -294,11 +303,13 @@
 ### Validation Rules
 
 - **Flashcards**:
+
   - `front`: Required, up to 200 characters.
   - `back`: Required, up to 500 characters.
   - `source`: Must be one of `ai-full`, `ai-edited`, or `manual`.
 
 - **Generation Request**:
+
   - `source_text`: Required, length between 1000 and 10000 characters.
   - `model`: Optional, but if provided, must match recognized model names.
 
@@ -309,6 +320,7 @@
 ### Business Logic Implementation
 
 1. **AI Flashcard Generation**:
+
    - Validate the length of `source_text` before processing.
    - Forward the validated source text to an AI model via Openrouter.ai.
    - Store the generated flashcards in the database with `source` set to `ai-full`.
@@ -316,15 +328,17 @@
    - Implement error logging and response codes for AI failures.
 
 2. **Flashcard Approval Process**:
+
    - Present generated flashcards to the user for review.
    - Allow users to approve as-is or edit flashcards before finalizing.
    - Update flashcard records accordingly (using `ai-full` or `ai-edited`) and track acceptance metrics.
 
 3. **Spaced Repetition Algorithm**:
+
    - The study endpoints apply a spaced repetition algorithm based on past review performance.
    - Use feedback from `/api/study/feedback` to schedule the next review date.
 
 4. **Security, Rate Limiting and Performance**:
    - Enforce RLS at the database level, ensuring data isolation between users.
    - Apply rate limiting on endpoints to mitigate abuse (to be implemented at the middleware or API gateway level).
-   - Validate all incoming data and handle errors as early as possible. 
+   - Validate all incoming data and handle errors as early as possible.

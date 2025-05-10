@@ -1,6 +1,6 @@
-import type { APIRoute } from 'astro';
-import { createSupabaseServer } from '../../../db/supabase.server';
-import { z } from 'zod';
+import type { APIRoute } from "astro";
+import { createSupabaseServer } from "../../../db/supabase.server";
+import { z } from "zod";
 
 /**
  * Schema for password reset request validation
@@ -8,29 +8,29 @@ import { z } from 'zod';
  * @property {string} [redirectTo] - Optional URL to redirect after password reset
  */
 const resetPasswordSchema = z.object({
-  email: z.string().email('Invalid email format'),
-  redirectTo: z.string().url('Invalid redirect URL').optional(),
+  email: z.string().email("Invalid email format"),
+  redirectTo: z.string().url("Invalid redirect URL").optional(),
 });
 
 /**
  * Security headers for the password reset endpoint
  */
 const securityHeaders = {
-  'Content-Type': 'application/json',
-  'X-Content-Type-Options': 'nosniff',
-  'X-Frame-Options': 'DENY',
-  'Referrer-Policy': 'strict-origin-when-cross-origin',
-  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+  "Content-Type": "application/json",
+  "X-Content-Type-Options": "nosniff",
+  "X-Frame-Options": "DENY",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+  "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
 };
 
 export const prerender = false;
 
 /**
  * Password Reset Endpoint
- * 
+ *
  * Handles password reset requests by sending a reset link via email.
  * The link will redirect the user to the specified URL or default reset confirmation page.
- * 
+ *
  * @route POST /api/auth/reset-password
  * @param {Object} request - The request object
  * @param {Object} request.body - The request body
@@ -45,14 +45,14 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     const result = resetPasswordSchema.safeParse(body);
 
     if (!result.success) {
-      console.warn('Invalid password reset request:', {
+      console.warn("Invalid password reset request:", {
         issues: result.error.issues,
-        userAgent: request.headers.get('user-agent'),
+        userAgent: request.headers.get("user-agent"),
       });
 
       return new Response(
         JSON.stringify({
-          error: 'Invalid request data',
+          error: "Invalid request data",
           details: result.error.issues,
         }),
         {
@@ -63,7 +63,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     }
 
     const { email, redirectTo } = result.data;
-    const origin = request.headers.get('origin');
+    const origin = request.headers.get("origin");
 
     // Initialize Supabase client
     const supabase = createSupabaseServer({
@@ -77,18 +77,18 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     });
 
     if (error) {
-      console.error('Password reset failed:', {
+      console.error("Password reset failed:", {
         error: error.message,
         email,
         redirectTo,
-        userAgent: request.headers.get('user-agent'),
+        userAgent: request.headers.get("user-agent"),
         timestamp: new Date().toISOString(),
       });
 
       return new Response(
-        JSON.stringify({ 
-          error: 'Failed to send password reset email',
-          details: error.message 
+        JSON.stringify({
+          error: "Failed to send password reset email",
+          details: error.message,
         }),
         {
           status: 400,
@@ -97,14 +97,14 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       );
     }
 
-    console.info('Password reset email sent:', {
+    console.info("Password reset email sent:", {
       email,
       timestamp: new Date().toISOString(),
     });
 
     return new Response(
-      JSON.stringify({ 
-        message: 'Password reset email sent successfully. Please check your inbox.' 
+      JSON.stringify({
+        message: "Password reset email sent successfully. Please check your inbox.",
       }),
       {
         status: 200,
@@ -112,18 +112,15 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       }
     );
   } catch (error) {
-    console.error('Unexpected error during password reset:', {
-      error: error instanceof Error ? error.message : 'Unknown error',
+    console.error("Unexpected error during password reset:", {
+      error: error instanceof Error ? error.message : "Unknown error",
       stack: error instanceof Error ? error.stack : undefined,
       timestamp: new Date().toISOString(),
     });
 
-    return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
-      {
-        status: 500,
-        headers: securityHeaders,
-      }
-    );
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
+      status: 500,
+      headers: securityHeaders,
+    });
   }
-}; 
+};

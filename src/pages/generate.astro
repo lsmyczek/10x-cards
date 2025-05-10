@@ -1,28 +1,25 @@
 ---
-import Layout from '@/layouts/Layout.astro';
-import { FlashcardGenerator } from '@/components/FlashcardGenerator';
-import FancyBg from '@/components/FancyBg.astro';
-import DashboardNavbar from '@/components/DashboardNavbar.astro';
-import { WandSparkles, Sparkles } from 'lucide-react';
-import DashboardLayout from '@/layouts/DashboardLayout.astro';
+import { FlashcardGenerator } from "@/components/FlashcardGenerator";
+import { Sparkles } from "lucide-react";
+import DashboardLayout from "@/layouts/DashboardLayout.astro";
 ---
 
 <DashboardLayout title="Generate Flashcards">
-    <div class="relative z-5 pb-16 pt-8 flex flex-col gap-4">
-      <div class="text-center">
-        <div class="flex items-center justify-center gap-2 text-3xl md:text-4xl font-bold tracking-tight">
-            <!-- <WandSparkles className="h-7 w-7 text-indigo-800" /> -->
-            <Sparkles className="h-7 w-7 text-indigo-800" />
-            <h1 class="bg-gradient-to-r from-indigo-800 to-teal-500 inline-block text-transparent bg-clip-text mx-1">
-              Generate Flashcards
-            </h1>
-        </div>
-        <p class="text-muted-foreground mt-2">
-          Paste your text below to automatically generate flashcard proposals using AI.
-        </p>
+  <div class="relative z-5 pb-16 pt-8 flex flex-col gap-4">
+    <div class="text-center">
+      <div class="flex items-center justify-center gap-2 text-3xl md:text-4xl font-bold tracking-tight">
+        <!-- <WandSparkles className="h-7 w-7 text-indigo-800" /> -->
+        <Sparkles className="h-7 w-7 text-indigo-800" />
+        <h1 class="bg-gradient-to-r from-indigo-800 to-teal-500 inline-block text-transparent bg-clip-text mx-1">
+          Generate Flashcards
+        </h1>
       </div>
-      <div class="">
-        <FlashcardGenerator client:load />
-      </div>
+      <p class="text-muted-foreground mt-2">
+        Paste your text below to automatically generate flashcard proposals using AI.
+      </p>
     </div>
-</DashboardLayout> 
+    <div class="">
+      <FlashcardGenerator client:load />
+    </div>
+  </div>
+</DashboardLayout>

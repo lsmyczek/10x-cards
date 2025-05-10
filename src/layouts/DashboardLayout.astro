@@ -1,6 +1,6 @@
 ---
 import "../styles/global.css";
-import { Toaster } from '@/components/ui/sonner';
+import { Toaster } from "@/components/ui/sonner";
 import DashboardSidebar from "../components/DashboardSidebar.astro";
 import DashboardNavbar from "../components/DashboardNavbar.astro";
 import FancyBg from "../components/FancyBg.astro";
@@ -13,7 +13,7 @@ const { title = "10x Astro Starter" } = Astro.props;
 const user = Astro.locals.user;
 
 if (!user) {
-  return Astro.redirect('/auth/sign-in');
+  return Astro.redirect("/auth/sign-in");
 }
 ---
 
@@ -28,15 +28,14 @@ if (!user) {
   </head>
   <body>
     <div class="relative min-h-full w-full grid grid-cols-1 xl:grid-cols-[260px_1fr] gap-0">
-      <DashboardSidebar/>
+      <DashboardSidebar />
       <main class="relative z-5 px-4 md:px-8 xl:px-16 pb-16">
-          <DashboardNavbar/>
-          <slot />
+        <DashboardNavbar />
+        <slot />
       </main>
       <Toaster client:load />
-      <FancyBg/>
+      <FancyBg />
     </div>
-    
   </body>
 </html>
 

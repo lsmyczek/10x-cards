@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 // Configuration interface
 export interface OpenRouterConfiguration {
@@ -21,21 +21,24 @@ export interface ChatResponse {
 
 // Custom error types
 export class OpenRouterError extends Error {
-  constructor(message: string, public readonly code: string) {
+  constructor(
+    message: string,
+    public readonly code: string
+  ) {
     super(message);
-    this.name = 'OpenRouterError';
+    this.name = "OpenRouterError";
   }
 }
 
 export class NetworkError extends OpenRouterError {
   constructor(message: string) {
-    super(message, 'NETWORK_ERROR');
+    super(message, "NETWORK_ERROR");
   }
 }
 
 export class RateLimitError extends OpenRouterError {
   constructor(message: string) {
-    super(message, 'RATE_LIMIT_ERROR');
+    super(message, "RATE_LIMIT_ERROR");
   }
 }
 
@@ -43,4 +46,4 @@ export class RateLimitError extends OpenRouterError {
 export const chatResponseSchema = z.object({
   answer: z.string(),
   note: z.string(),
-}); 
+});

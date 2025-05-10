@@ -1,5 +1,5 @@
-import { Card, CardContent } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function LoadingGenerationsSkeleton() {
   // Show 3 skeleton cards to represent loading state
@@ -22,4 +22,4 @@ export function LoadingGenerationsSkeleton() {
       ))}
     </div>
   );
-} 
+}

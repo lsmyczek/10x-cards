@@ -1,7 +1,7 @@
-import type { FlashcardDto } from '../types';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import type { FlashcardDto } from "../types";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,8 +12,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { Pencil, Trash, WandSparkles } from 'lucide-react';
+} from "@/components/ui/alert-dialog";
+import { Pencil, Trash, WandSparkles } from "lucide-react";
 
 interface FlashcardItemProps {
   flashcard: FlashcardDto;
@@ -22,8 +22,8 @@ interface FlashcardItemProps {
 }
 
 export function FlashcardItem({ flashcard, onEdit, onDelete }: FlashcardItemProps) {
-  const isAI = flashcard.source === 'ai-full' || flashcard.source === 'ai-edited';
-  const isEdited = flashcard.source === 'ai-edited';
+  const isAI = flashcard.source === "ai-full" || flashcard.source === "ai-edited";
+  const isEdited = flashcard.source === "ai-edited";
 
   return (
     <Card className="w-full py-6">
@@ -82,9 +82,7 @@ export function FlashcardItem({ flashcard, onEdit, onDelete }: FlashcardItemProp
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={() => onDelete(flashcard.id)}>
-                Delete
-              </AlertDialogAction>
+              <AlertDialogAction onClick={() => onDelete(flashcard.id)}>Delete</AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>

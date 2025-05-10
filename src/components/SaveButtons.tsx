@@ -1,6 +1,6 @@
-import { Button } from '@/components/ui/button';
-import { Save } from 'lucide-react';
-import type { FlashcardProposalViewModel } from './FlashcardGenerator';
+import { Button } from "@/components/ui/button";
+import { Save } from "lucide-react";
+import type { FlashcardProposalViewModel } from "./FlashcardGenerator";
 
 interface SaveButtonsProps {
   flashcards: FlashcardProposalViewModel[];
@@ -9,8 +9,8 @@ interface SaveButtonsProps {
 }
 
 export function SaveButtons({ flashcards, onSave, isSaving }: SaveButtonsProps) {
-  const acceptedCards = flashcards.filter(card => card.accepted);
-  const unrejectedCards = flashcards.filter(card => !card.rejected);
+  const acceptedCards = flashcards.filter((card) => card.accepted);
+  const unrejectedCards = flashcards.filter((card) => !card.rejected);
   const hasAcceptedCards = acceptedCards.length > 0;
   const hasCards = flashcards.length > 0;
 
@@ -20,10 +20,10 @@ export function SaveButtons({ flashcards, onSave, isSaving }: SaveButtonsProps) 
 
   const handleSaveAll = () => {
     // Mark all cards as accepted
-    const allCardsAccepted = unrejectedCards.map(card => ({
+    const allCardsAccepted = unrejectedCards.map((card) => ({
       ...card,
       accepted: true,
-      rejected: false
+      rejected: false,
     }));
     onSave(allCardsAccepted);
   };
@@ -31,27 +31,22 @@ export function SaveButtons({ flashcards, onSave, isSaving }: SaveButtonsProps) 
   return (
     <div className="flex flex-col md:flex-row gap-4 items-startmd:items-center justify-between bg-muted/50 py-4 mb-2">
       <div className="text-sm text-muted-foreground">
-        <p>{acceptedCards.length} of {flashcards.length} flashcards accepted</p>
+        <p>
+          {acceptedCards.length} of {flashcards.length} flashcards accepted
+        </p>
       </div>
 
       <div className="flex space-x-4 md:space-x-2">
-        <Button
-          variant="outline"
-          onClick={handleSaveAll}
-          disabled={!hasCards || isSaving}
-        >
+        <Button variant="outline" onClick={handleSaveAll} disabled={!hasCards || isSaving}>
           <Save className="h-4 w-4 mr-2" />
           Save All Unrejected ({unrejectedCards.length})
         </Button>
 
-        <Button
-          onClick={() => onSave(acceptedCards)}
-          disabled={!hasAcceptedCards || isSaving}
-        >
+        <Button onClick={() => onSave(acceptedCards)} disabled={!hasAcceptedCards || isSaving}>
           <Save className="h-4 w-4 mr-2" />
-          {isSaving ? 'Saving...' : 'Save Accepted'}
+          {isSaving ? "Saving..." : "Save Accepted"}
         </Button>
       </div>
     </div>
   );
-} 
+}

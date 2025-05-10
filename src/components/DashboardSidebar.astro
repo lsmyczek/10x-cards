@@ -1,75 +1,87 @@
 ---
-import DashboardSidebarNav from '@/components/DashboardSidebarNav.astro';
-import { navItems } from '@/lib/utils/navItems';
-import { Info, CircleUserRound, LogOut } from 'lucide-react';
-import { MobileMenuToggle } from '@/components/MobileMenuToggle';
+import DashboardSidebarNav from "@/components/DashboardSidebarNav.astro";
+import { navItems } from "@/lib/utils/navItems";
+import { Info, CircleUserRound, LogOut } from "lucide-react";
+import { MobileMenuToggle } from "@/components/MobileMenuToggle";
 const user = Astro.locals.user;
 if (!user) {
-  return Astro.redirect('/auth/sign-in');
+  return Astro.redirect("/auth/sign-in");
 }
 ---
 
-<div class="xl:hidden fixed inset-0 bg-black/20 opacity-0 pointer-events-none transition-all backdrop-blur-md duration-300 z-10" id="sidebar-overlay"></div>
-<aside class="fixed xl:sticky top-0 left-0 w-full z-30 max-w-[340px] md:max-w-[300px] h-screen 
-  -translate-x-full xl:translate-x-0 transition-transform duration-500
-">
-    <div class="absolute top-4 right-4 z-1">
-      <MobileMenuToggle client:load variant="close" />
-    </div>
-    <div class="flex flex-col justify-between h-full
-    w-full bg-transparent bg-gradient-to-b from-white to-white/60 xl:to-white/20 hover:bg-white backdrop-blur-xl rounded-r-3xl border border-black/5 shadow-[10px_0_20px_rgba(0,0,0,0.05)] transition-colors duration-500">
-
+<div
+  class="xl:hidden fixed inset-0 bg-black/20 opacity-0 pointer-events-none transition-all backdrop-blur-md duration-300 z-10"
+  id="sidebar-overlay"
+>
+</div>
+<aside
+  class="fixed xl:sticky top-0 left-0 w-full z-30 max-w-[340px] md:max-w-[300px] h-screen
+  -translate-x-full xl:translate-x-0 transition-transform duration-500"
+>
+  <div class="absolute top-4 right-4 z-1">
+    <MobileMenuToggle client:load variant="close" />
+  </div>
+  <div
+    class="flex flex-col justify-between h-full
+    w-full bg-transparent bg-gradient-to-b from-white to-white/60 xl:to-white/20 hover:bg-white backdrop-blur-xl rounded-r-3xl border border-black/5 shadow-[10px_0_20px_rgba(0,0,0,0.05)] transition-colors duration-500"
+  >
     <div class="flex flex-col py-8 px-4 gap-12">
-        <a href="/dashboard/" class="text-3xl font-bold">
-          10<span class="bg-gradient-to-br from-indigo-600 to-teal-500 inline-block text-transparent bg-clip-text"
-          >x</span>Cards
-        </a>
-        <DashboardSidebarNav navItems={navItems} />
+      <a href="/dashboard/" class="text-3xl font-bold">
+        10<span class="bg-gradient-to-br from-indigo-600 to-teal-500 inline-block text-transparent bg-clip-text">x</span
+        >Cards
+      </a>
+      <DashboardSidebarNav navItems={navItems} />
     </div>
 
     <div class="flex flex-col py-8 px-4 gap-6">
-        <a href="/about" class="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors duration-200">
-            <Info className="w-4" />
-            About 10xCards
-        </a>
-        <div class="flex xl:hidden flex-col gap-4 border-t pt-8 ">
-          <span class="text-sm text-muted-foreground flex items-center gap-2  ">
-            <CircleUserRound />
-            <span class="text-sm max-w-[200px] truncate">{user.email}</span>
-          </span>
-          <form action="/api/auth/logout" method="POST">
-            <button type="submit" class="flex w-full justify-center items-center gap-2 rounded-4xl px-4 leading-7 py-1 text-sm font-medium text-white bg-black/50 hover:bg-black  transition-colors duration-300 cursor-pointer">
-              <LogOut className="w-4 h-4 -ms-4"/>  
-              Logout
-            </button>
-          </form>
-        </div>
+      <a
+        href="/about"
+        class="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors duration-200"
+      >
+        <Info className="w-4" />
+        About 10xCards
+      </a>
+      <div class="flex xl:hidden flex-col gap-4 border-t pt-8">
+        <span class="text-sm text-muted-foreground flex items-center gap-2">
+          <CircleUserRound />
+          <span class="text-sm max-w-[200px] truncate">{user.email}</span>
+        </span>
+        <form action="/api/auth/logout" method="POST">
+          <button
+            type="submit"
+            class="flex w-full justify-center items-center gap-2 rounded-4xl px-4 leading-7 py-1 text-sm font-medium text-white bg-black/50 hover:bg-black transition-colors duration-300 cursor-pointer"
+          >
+            <LogOut className="w-4 h-4 -ms-4" />
+            Logout
+          </button>
+        </form>
+      </div>
     </div>
-    </div>
+  </div>
 </aside>
 
 <script>
-  const sidebar = document.querySelector('aside');
-  const overlay = document.getElementById('sidebar-overlay');
+  const sidebar = document.querySelector("aside");
+  const overlay = document.getElementById("sidebar-overlay");
 
   // Close sidebar when clicking overlay
-  overlay?.addEventListener('click', () => {
-    overlay?.classList.add('opacity-0');
-    overlay?.classList.add('pointer-events-none');
-    sidebar?.classList.add('-translate-x-full');
+  overlay?.addEventListener("click", () => {
+    overlay?.classList.add("opacity-0");
+    overlay?.classList.add("pointer-events-none");
+    sidebar?.classList.add("-translate-x-full");
   });
 
   // Update overlay when sidebar is toggled
   const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
-      if (mutation.attributeName === 'class') {
-        const isSidebarHidden = sidebar?.classList.contains('-translate-x-full');
+      if (mutation.attributeName === "class") {
+        const isSidebarHidden = sidebar?.classList.contains("-translate-x-full");
         if (!isSidebarHidden) {
-          overlay?.classList.remove('opacity-0');
-          overlay?.classList.remove('pointer-events-none');
+          overlay?.classList.remove("opacity-0");
+          overlay?.classList.remove("pointer-events-none");
         } else {
-          overlay?.classList.add('opacity-0');
-          overlay?.classList.add('pointer-events-none');
+          overlay?.classList.add("opacity-0");
+          overlay?.classList.add("pointer-events-none");
         }
       }
     });

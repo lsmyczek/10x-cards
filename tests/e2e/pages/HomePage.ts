@@ -1,5 +1,5 @@
-import { expect } from '@playwright/test';
-import type { Page, Locator } from '@playwright/test';
+import { expect } from "@playwright/test";
+import type { Page, Locator } from "@playwright/test";
 
 /**
  * Page Object Model for the Home page
@@ -13,17 +13,17 @@ export class HomePage {
 
   constructor(page: Page) {
     this.page = page;
-    this.heading = page.locator('h1');
-    this.heroSection = page.getByRole('region', { name: 'hero' });
-    this.ctaButton = page.getByRole('link', { name: /get started/i });
-    this.navbarLinks = page.locator('nav a');
+    this.heading = page.locator("h1");
+    this.heroSection = page.getByRole("region", { name: "hero" });
+    this.ctaButton = page.getByRole("link", { name: /get started/i });
+    this.navbarLinks = page.locator("nav a");
   }
 
   /**
    * Navigate to the home page
    */
   async goto() {
-    await this.page.goto('/');
+    await this.page.goto("/");
   }
 
   /**
@@ -48,4 +48,4 @@ export class HomePage {
   async takeScreenshot(path: string) {
     await this.page.screenshot({ path });
   }
-} 
+}

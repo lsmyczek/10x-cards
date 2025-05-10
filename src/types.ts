@@ -1,7 +1,7 @@
 // DTO and Command Models for API
 
 // Common type for flashcard source based on database definition
-export type FlashcardSource = 'manual' | 'ai-full' | 'ai-edited';
+export type FlashcardSource = "manual" | "ai-full" | "ai-edited";
 
 // Pagination metadata type used in list responses
 export interface PaginationMetaDto {
@@ -52,7 +52,7 @@ export interface FlashcardProposalDto {
   id: number;
   front: string;
   back: string;
-  source: 'ai-full';
+  source: "ai-full";
 }
 
 // Command Model for creating a generation request (used in POST /api/generations)
@@ -68,7 +68,7 @@ export interface GenerationDto {
   source_text_length: number;
   generation_duration: number;
   created_at: string;
-  status: 'processing' | 'completed' | 'error';
+  status: "processing" | "completed" | "error";
   flashcards_proposals: FlashcardProposalDto[];
 }
 

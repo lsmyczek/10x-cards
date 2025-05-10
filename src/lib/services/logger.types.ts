@@ -4,4 +4,4 @@ export interface Logger {
   warn(message: string, meta?: Record<string, unknown>): void;
   error(message: string, error?: Error, meta?: Record<string, unknown>): void;
   sanitizeMetadata(meta: Record<string, unknown>): Record<string, unknown>;
-} 
+}

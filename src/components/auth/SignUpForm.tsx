@@ -42,10 +42,8 @@ export function SignUpForm() {
       // Redirect to confirmation page
       window.location.href = "/auth/confirm-registration";
     } catch (error) {
-      console.error("Registration error:", error);
-      setServerError(
-        error instanceof Error ? error.message : "An error occurred during registration"
-      );
+      console.log("Registration error:", error);
+      setServerError(error instanceof Error ? error.message : "An error occurred during registration");
     } finally {
       setIsLoading(false);
     }
@@ -138,15 +136,14 @@ export function SignUpForm() {
         </p>
       )}
 
-
       <Button type="submit" size="lg" className="w-full mt-2" disabled={isLoading}>
         {isLoading ? "Creating account..." : "Sign Up"}
       </Button>
       <div className="flex justify-center items-center mt-2">
-      <a href="/auth/sign-in" className="text-sm  hover:underline">
+        <a href="/auth/sign-in" className="text-sm  hover:underline">
           Already have an account? - Sign In
         </a>
       </div>
     </form>
   );
-} 
+}

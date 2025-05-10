@@ -1,9 +1,11 @@
 # AddFlashcard Component Implementation Plan
 
 ## Overview
+
 This document outlines the implementation plan for the `AddFlashcard` React component. The component enables users to manually add a flashcard via a modal dialog. It uses shadcn/ui for UI components, follows Tailwind CSS styling and adheres to our project's tech stack and coding practices.
 
 ## Key Requirements
+
 - **Component Location**: `/src/components/AddFlashcard.tsx`
 - **Functionality**:
   - A button that triggers a modal dialog.
@@ -21,10 +23,12 @@ This document outlines the implementation plan for the `AddFlashcard` React comp
 ## Implementation Steps
 
 ### 1. Setup and Imports
+
 - Create the `AddFlashcard.tsx` file in `/src/components` if it doesn't exist.
 - Import any relevant types from `/src/types.ts`.
 
 ### 2. UI Implementation
+
 - **Main Button**: Render a button that, opens modal.
 - **Modal Structure**:
   - Include a header or title (e.g., "Add Flashcard").
@@ -35,20 +39,23 @@ This document outlines the implementation plan for the `AddFlashcard` React comp
 - Use shadcn/ui components for the modal to ensure consistent style and behavior.
 
 ### 3. Service integration - Form Handling & Validation
-  - Integrate component with `createFlashcards` in `/src/services/flashcrads.service.ts
-  - Validation Rules:
 
-    ```json
+- Integrate component with `createFlashcards` in `/src/services/flashcrads.service.ts
+- Validation Rules:
+
+  ```json
   {
     "flashcards": [
       {
         "front": "string (max 200 chars)",
         "back": "string (max 500 chars)",
-        "source": "manual",
+        "source": "manual"
       }
     ]
   }
   ```
+
+```
 
 ### 6. Error Handling and Loading States
 - Provide visual feedback for loading states nad success message (inside modal).
@@ -65,4 +72,5 @@ This document outlines the implementation plan for the `AddFlashcard` React comp
 
 ---
 
-This implementation plan provides a clear roadmap for building the `AddFlashcard` component, ensuring consistency with our codebase practices and technologies. 
+This implementation plan provides a clear roadmap for building the `AddFlashcard` component, ensuring consistency with our codebase practices and technologies.
+```

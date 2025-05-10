@@ -4,12 +4,8 @@ export default function AccountWidget() {
   return (
     <Card className="py-6">
       <CardHeader>
-        <CardTitle className="text-2xl font-bold">
-          Hello, Łukasz!
-        </CardTitle>
-        <CardDescription>
-          Your account information
-        </CardDescription>
+        <CardTitle className="text-2xl font-bold">Hello, Łukasz!</CardTitle>
+        <CardDescription>Your account information</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-2">
