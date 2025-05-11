@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signUpSchema, type SignUpInput } from "@/lib/validations/auth";
-import { supabase } from "@/db/supabase.client";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 
 export function SignUpForm() {
@@ -27,22 +26,27 @@ export function SignUpForm() {
       setIsLoading(true);
       setServerError(null);
 
-      const { error } = await supabase.auth.signUp({
-        email: data.email,
-        password: data.password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password,
+        }),
       });
 
-      if (error) {
-        throw error;
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to create account");
       }
 
       // Redirect to confirmation page
       window.location.href = "/auth/confirm-registration";
     } catch (error) {
-      console.log("Registration error:", error);
+      console.error("Registration error:", error);
       setServerError(error instanceof Error ? error.message : "An error occurred during registration");
     } finally {
       setIsLoading(false);
