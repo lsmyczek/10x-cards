@@ -4,8 +4,6 @@ import { z } from "zod";
 
 /**
  * Schema for password reset confirmation request validation
- * @property {string} password - New password
- * @property {string} refreshToken - Refresh token from the reset link
  */
 const confirmResetSchema = z.object({
   password: z
@@ -16,7 +14,10 @@ const confirmResetSchema = z.object({
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/,
       "Password must contain at least one uppercase letter, one lowercase letter, and one number"
     ),
-  refreshToken: z.string(),
+  code: z.string().optional(),
+  refreshToken: z.string().optional(),
+}).refine((data) => data.code || data.refreshToken, {
+  message: "Either code or refreshToken must be provided",
 });
 
 /**
@@ -36,26 +37,18 @@ export const prerender = false;
  * Password Reset Confirmation Endpoint
  *
  * Handles setting a new password after receiving a reset token.
- * Requires a valid access token in the Authorization header.
+ * Supports both new code-based format and legacy refresh token format.
  *
- * @route POST /auth/confirm-reset-password
+ * @route POST /api/auth/confirm-reset-password
  * @param {Object} request - The request object
  * @param {Object} request.body - The request body
  * @param {string} request.body.password - New password
- * @param {string} request.body.refreshToken - Refresh token from the reset link
+ * @param {string} [request.body.code] - Reset code from the URL
+ * @param {string} [request.body.refreshToken] - Legacy refresh token
  * @returns {Response} JSON response indicating success or failure
  */
 export const POST: APIRoute = async ({ request, cookies }) => {
   try {
-    // Get the access token from the Authorization header
-    const authHeader = request.headers.get("Authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return new Response(JSON.stringify({ error: "Missing or invalid authorization token" }), {
-        status: 401,
-        headers: securityHeaders,
-      });
-    }
-
     // Parse and validate request body
     const body = await request.json();
     const result = confirmResetSchema.safeParse(body);
@@ -78,7 +71,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       );
     }
 
-    const { password, refreshToken } = result.data;
+    const { password, code } = result.data;
 
     // Initialize Supabase client
     const supabase = createSupabaseServer({
@@ -86,8 +79,23 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       headers: request.headers,
     });
 
-    // Update the password
-    const { error } = await supabase.auth.updateUser({ password });
+    let error;
+
+    if (code) {
+      // Exchange the recovery code for a session
+      const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+      error = exchangeError;
+
+      if (!error) {
+        // If code exchange successful, update the password
+        const { error: updateError } = await supabase.auth.updateUser({ password });
+        error = updateError;
+      }
+    } else {
+      // Legacy format: Update password directly (requires existing session)
+      const { error: updateError } = await supabase.auth.updateUser({ password });
+      error = updateError;
+    }
 
     if (error) {
       console.error("Password reset confirmation failed:", {
