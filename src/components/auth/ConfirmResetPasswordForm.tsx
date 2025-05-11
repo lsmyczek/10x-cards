@@ -84,7 +84,15 @@ export function ConfirmResetPasswordForm() {
         throw new Error("No valid reset token found in URL");
       }
 
-      const response = await fetch("/api/auth/confirm-reset-password", {
+      // Get the current origin
+      const origin = window.location.origin;
+      const apiUrl = `${origin}/api/auth/confirm-reset-password`;
+
+      console.log("Sending request to:", apiUrl);
+      console.log("Request headers:", headers);
+      console.log("Request body:", requestBody);
+
+      const response = await fetch(apiUrl, {
         method: "POST",
         headers,
         body: JSON.stringify(requestBody),

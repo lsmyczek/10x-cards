@@ -31,7 +31,7 @@ const securityHeaders = {
   "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
 
 export const prerender = false;
@@ -51,6 +51,9 @@ export const prerender = false;
  * @returns {Response} JSON response indicating success or failure
  */
 export const POST: APIRoute = async ({ request, cookies, redirect }) => {
+  console.log("Received password reset request");
+  console.log("Request headers:", Object.fromEntries(request.headers.entries()));
+
   // Handle preflight requests
   if (request.method === "OPTIONS") {
     return new Response(null, {
@@ -62,6 +65,8 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
   try {
     // Parse and validate request body
     const body = await request.json();
+    console.log("Request body:", body);
+
     const result = confirmResetSchema.safeParse(body);
 
     if (!result.success) {
