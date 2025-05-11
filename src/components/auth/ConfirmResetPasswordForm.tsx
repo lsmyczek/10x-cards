@@ -94,17 +94,38 @@ export function ConfirmResetPasswordForm() {
       if (response.status === 302 || response.status === 301) {
         const redirectUrl = response.headers.get("location");
         if (redirectUrl) {
-          window.location.href = redirectUrl;
+          setFormState({
+            status: "success",
+            message: "Password reset successfully. Redirecting...",
+          });
+          
+          // Clear form
+          setFormData({ password: "", confirmPassword: "" });
+          
+          // Redirect after a short delay
+          setTimeout(() => {
+            window.location.href = redirectUrl;
+          }, 2000);
           return;
         }
       }
 
-      // Only try to parse JSON for non-redirect responses
-      if (!response.ok && response.status !== 302 && response.status !== 301) {
-        const data = await response.json();
-        throw new Error(data.error || "Failed to reset password");
+      // For non-redirect responses, try to parse JSON if there's content
+      if (!response.ok) {
+        let errorMessage = "Failed to reset password";
+        const contentType = response.headers.get("content-type");
+        if (contentType?.includes("application/json")) {
+          try {
+            const data = await response.json();
+            errorMessage = data.error || errorMessage;
+          } catch (e) {
+            console.error("Failed to parse error response:", e);
+          }
+        }
+        throw new Error(errorMessage);
       }
 
+      // If we get here, it's a successful non-redirect response
       setFormState({
         status: "success",
         message: "Password reset successfully. Redirecting to login...",
@@ -113,12 +134,9 @@ export function ConfirmResetPasswordForm() {
       // Clear form
       setFormData({ password: "", confirmPassword: "" });
 
-      // Use the redirect URL from the response, or fall back to sign-in
-      const redirectUrl = response.headers.get("location") || "/auth/sign-in";
-      
-      // Redirect after a short delay
+      // Redirect to sign-in after a short delay
       setTimeout(() => {
-        window.location.href = redirectUrl;
+        window.location.href = "/auth/sign-in";
       }, 2000);
     } catch (error) {
       setFormState({
