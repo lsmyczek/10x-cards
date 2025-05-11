@@ -29,6 +29,9 @@ const securityHeaders = {
   "X-Frame-Options": "DENY",
   "Referrer-Policy": "strict-origin-when-cross-origin",
   "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
 };
 
 export const prerender = false;
@@ -47,7 +50,15 @@ export const prerender = false;
  * @param {string} [request.body.refreshToken] - Legacy refresh token
  * @returns {Response} JSON response indicating success or failure
  */
-export const POST: APIRoute = async ({ request, cookies }) => {
+export const POST: APIRoute = async ({ request, cookies, redirect }) => {
+  // Handle preflight requests
+  if (request.method === "OPTIONS") {
+    return new Response(null, {
+      status: 204,
+      headers: securityHeaders,
+    });
+  }
+
   try {
     // Parse and validate request body
     const body = await request.json();
@@ -120,15 +131,8 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       timestamp: new Date().toISOString(),
     });
 
-    return new Response(
-      JSON.stringify({
-        message: "Password reset successfully",
-      }),
-      {
-        status: 200,
-        headers: securityHeaders,
-      }
-    );
+    // Return a redirect response
+    return redirect("/auth/sign-in", 302);
   } catch (error) {
     console.error("Unexpected error during password reset confirmation:", {
       error: error instanceof Error ? error.message : "Unknown error",

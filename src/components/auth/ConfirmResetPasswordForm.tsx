@@ -83,13 +83,25 @@ export function ConfirmResetPasswordForm() {
 
       const response = await fetch("/api/auth/confirm-reset-password", {
         method: "POST",
-        headers,
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(requestBody),
+        redirect: "manual", // Don't automatically follow redirects
       });
 
-      const data = await response.json();
+      // Handle redirect response
+      if (response.status === 302 || response.status === 301) {
+        const redirectUrl = response.headers.get("location");
+        if (redirectUrl) {
+          window.location.href = redirectUrl;
+          return;
+        }
+      }
 
-      if (!response.ok) {
+      // Only try to parse JSON for non-redirect responses
+      if (!response.ok && response.status !== 302 && response.status !== 301) {
+        const data = await response.json();
         throw new Error(data.error || "Failed to reset password");
       }
 
@@ -101,9 +113,12 @@ export function ConfirmResetPasswordForm() {
       // Clear form
       setFormData({ password: "", confirmPassword: "" });
 
-      // Redirect to login after a short delay
+      // Use the redirect URL from the response, or fall back to sign-in
+      const redirectUrl = response.headers.get("location") || "/auth/sign-in";
+      
+      // Redirect after a short delay
       setTimeout(() => {
-        window.location.href = "/auth/sign-in";
+        window.location.href = redirectUrl;
       }, 2000);
     } catch (error) {
       setFormState({
