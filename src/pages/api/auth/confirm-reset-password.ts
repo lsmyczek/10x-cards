@@ -148,7 +148,7 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
       timestamp: new Date().toISOString(),
     });
 
-    // Return a JSON response with redirect information
+    // Return a JSON response with redirect information and 200 status
     return new Response(
       JSON.stringify({
         success: true,
@@ -160,6 +160,8 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
         headers: {
           ...securityHeaders,
           "Cache-Control": "no-store, max-age=0",
+          // Ensure we're sending JSON content type
+          "Content-Type": "application/json"
         }
       }
     );
@@ -170,9 +172,18 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
       timestamp: new Date().toISOString(),
     });
 
-    return new Response(JSON.stringify({ error: "Internal server error" }), {
-      status: 500,
-      headers: securityHeaders,
-    });
+    return new Response(
+      JSON.stringify({ 
+        error: "Internal server error",
+        success: false 
+      }), 
+      {
+        status: 500,
+        headers: {
+          ...securityHeaders,
+          "Content-Type": "application/json"
+        }
+      }
+    );
   }
 };

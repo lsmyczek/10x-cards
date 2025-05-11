@@ -88,36 +88,63 @@ export function ConfirmResetPasswordForm() {
         method: "POST",
         headers,
         body: JSON.stringify(requestBody),
+        // Prevent automatic redirects
+        redirect: "manual"
       });
+
+      // Check if we got a redirect
+      if (response.status === 302 || response.status === 301) {
+        const redirectUrl = response.headers.get("location");
+        if (redirectUrl) {
+          setFormState({
+            status: "success",
+            message: "Password reset successfully. Redirecting...",
+          });
+          
+          // Clear form
+          setFormData({ password: "", confirmPassword: "" });
+          
+          // Redirect after a short delay
+          setTimeout(() => {
+            window.location.href = redirectUrl;
+          }, 2000);
+          return;
+        }
+      }
 
       const contentType = response.headers.get("content-type");
       
-      // Always try to parse the response as JSON first
-      try {
-        const data = await response.json();
-        
-        if (!response.ok) {
-          console.error("Password reset error:", data);
-          throw new Error(data.error || data.details || "Failed to reset password");
+      // Handle JSON responses
+      if (contentType?.includes("application/json")) {
+        try {
+          const data = await response.json();
+          
+          if (!response.ok) {
+            console.error("Password reset error:", data);
+            throw new Error(data.error || data.details || "Failed to reset password");
+          }
+
+          // Handle successful response
+          setFormState({
+            status: "success",
+            message: data.message || "Password reset successfully. Redirecting to login...",
+          });
+
+          // Clear form
+          setFormData({ password: "", confirmPassword: "" });
+
+          // Redirect after a short delay
+          setTimeout(() => {
+            window.location.href = data.redirect || "/auth/sign-in";
+          }, 2000);
+          
+        } catch (e) {
+          console.error("Error processing JSON response:", e);
+          throw new Error("Failed to process server response");
         }
-
-        // Handle successful response
-        setFormState({
-          status: "success",
-          message: data.message || "Password reset successfully. Redirecting to login...",
-        });
-
-        // Clear form
-        setFormData({ password: "", confirmPassword: "" });
-
-        // Redirect after a short delay
-        setTimeout(() => {
-          window.location.href = data.redirect || "/auth/sign-in";
-        }, 2000);
-        
-      } catch (e) {
-        console.error("Error processing response:", e);
-        throw new Error("Failed to process server response");
+      } else {
+        console.error("Unexpected response type:", contentType);
+        throw new Error("Received unexpected response type from server");
       }
     } catch (error) {
       setFormState({
