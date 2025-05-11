@@ -1,0 +1,19 @@
+---
+import AuthLayout from "../../layouts/AuthLayout.astro";
+import { AuthCard } from "../../components/auth/AuthCard";
+import { buttonVariants } from "@/components/ui/button";
+import { CheckCircle2 } from "lucide-react";
+---
+
+<AuthLayout title="Registration Confirmed">
+  <AuthCard
+    title="Registration Confirmed!"
+    description="Your email has been verified successfully. You can now sign in to your account."
+  >
+    <div class="flex flex-col items-center gap-6">
+      <CheckCircle2 className="w-16 h-16 text-green-500" />
+      
+      <a href="/auth/sign-in" class={buttonVariants({ size: "lg" })}>Sign in</a>
+    </div>
+  </AuthCard>
+</AuthLayout> 
