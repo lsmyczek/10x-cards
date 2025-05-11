@@ -76,16 +76,17 @@ export function ConfirmResetPasswordForm() {
           password: formData.password,
           refreshToken,
         };
-        headers.Authorization = `Bearer ${accessToken}`;
+        headers = {
+          ...headers,
+          Authorization: `Bearer ${accessToken}`,
+        };
       } else {
         throw new Error("No valid reset token found in URL");
       }
 
       const response = await fetch("/api/auth/confirm-reset-password", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers,
         body: JSON.stringify(requestBody),
         redirect: "manual", // Don't automatically follow redirects
       });

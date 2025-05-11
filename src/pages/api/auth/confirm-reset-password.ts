@@ -82,7 +82,7 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
       );
     }
 
-    const { password, code } = result.data;
+    const { password, code, refreshToken } = result.data;
 
     // Initialize Supabase client
     const supabase = createSupabaseServer({
@@ -102,10 +102,18 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
         const { error: updateError } = await supabase.auth.updateUser({ password });
         error = updateError;
       }
+    } else if (refreshToken) {
+      // Legacy format: First verify the refresh token
+      const { error: verifyError } = await supabase.auth.refreshSession({ refresh_token: refreshToken });
+      error = verifyError;
+
+      if (!error) {
+        // If refresh token is valid, update the password
+        const { error: updateError } = await supabase.auth.updateUser({ password });
+        error = updateError;
+      }
     } else {
-      // Legacy format: Update password directly (requires existing session)
-      const { error: updateError } = await supabase.auth.updateUser({ password });
-      error = updateError;
+      error = new Error("No valid reset token provided");
     }
 
     if (error) {
