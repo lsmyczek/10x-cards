@@ -12,6 +12,9 @@ export default defineConfig({
   integrations: [react(), sitemap()],
   adapter: cloudflare(),
   vite: {
+    define: {
+      "process.env": process.env,
+    },
     plugins: [tailwindcss()],
     resolve: {
       // Use react-dom/server.edge instead of react-dom/server.browser for React 19.
