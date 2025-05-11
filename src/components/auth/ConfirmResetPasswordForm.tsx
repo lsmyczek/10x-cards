@@ -118,7 +118,8 @@ export function ConfirmResetPasswordForm() {
         if (contentType?.includes("application/json")) {
           try {
             const data = await response.json();
-            errorMessage = data.error || errorMessage;
+            console.error("Password reset error details:", data);
+            errorMessage = data.error || data.details || errorMessage;
           } catch (e) {
             console.error("Failed to parse error response:", e);
           }

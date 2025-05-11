@@ -125,8 +125,9 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
 
       return new Response(
         JSON.stringify({
-          error: "Failed to reset password",
+          error: error.message || "Failed to reset password",
           details: error.message,
+          code: error.name || "RESET_ERROR"
         }),
         {
           status: 400,
