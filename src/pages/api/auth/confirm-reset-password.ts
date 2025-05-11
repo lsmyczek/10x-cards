@@ -94,20 +94,28 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
 
     if (code) {
       // Exchange the recovery code for a session
-      const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+      const { data: sessionData, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
       error = exchangeError;
 
-      if (!error) {
-        // If code exchange successful, update the password
-        const { error: updateError } = await supabase.auth.updateUser({ password });
+      if (!error && sessionData?.session) {
+        // Create a new client with the session
+        const authenticatedSupabase = createSupabaseServer({
+          cookies,
+          headers: new Headers({
+            Authorization: `Bearer ${sessionData.session.access_token}`,
+          }),
+        });
+
+        // Update the password with the authenticated client
+        const { error: updateError } = await authenticatedSupabase.auth.updateUser({ password });
         error = updateError;
       }
     } else if (refreshToken) {
       // Legacy format: First verify the refresh token
-      const { error: verifyError } = await supabase.auth.refreshSession({ refresh_token: refreshToken });
+      const { data: sessionData, error: verifyError } = await supabase.auth.refreshSession({ refresh_token: refreshToken });
       error = verifyError;
 
-      if (!error) {
+      if (!error && sessionData?.session) {
         // If refresh token is valid, update the password
         const { error: updateError } = await supabase.auth.updateUser({ password });
         error = updateError;
