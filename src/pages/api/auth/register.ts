@@ -38,7 +38,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       email: result.data.email,
       password: result.data.password,
       options: {
-        emailRedirectTo: `${baseUrl}/auth/callback`,
+        emailRedirectTo: `${baseUrl}/auth/callback?type=signup`,
       },
     });
 

@@ -26,7 +26,7 @@ export const GET: APIRoute = async ({ url, cookies, request, redirect }) => {
       return redirect("/auth/signup-confirmed");
     } else {
       // For other auth actions (password reset, magic link, etc), redirect to dashboard
-      return redirect("/dashboard");
+      return redirect("/sign-in");
     }
     
   } catch (error) {
