@@ -50,26 +50,41 @@ export function ConfirmResetPasswordForm() {
     setFormState({ status: "submitting" });
 
     try {
-      // Get the token from the URL
-      const params = new URLSearchParams(window.location.hash.slice(1));
-      const accessToken = params.get("access_token");
-      const refreshToken = params.get("refresh_token");
-      const type = params.get("type");
+      // First try to get the code from query parameters
+      const queryParams = new URLSearchParams(window.location.search);
+      const code = queryParams.get("code");
 
-      if (!accessToken || !type || type !== "recovery") {
-        throw new Error("Invalid or missing reset token");
+      // If no code in query params, try hash params (legacy format)
+      const hashParams = new URLSearchParams(window.location.hash.slice(1));
+      const accessToken = hashParams.get("access_token");
+      const refreshToken = hashParams.get("refresh_token");
+      const type = hashParams.get("type");
+
+      // Determine which format we're dealing with
+      let requestBody;
+      let headers: HeadersInit = {
+        "Content-Type": "application/json",
+      };
+
+      if (code) {
+        requestBody = {
+          password: formData.password,
+          code,
+        };
+      } else if (accessToken && refreshToken && type === "recovery") {
+        requestBody = {
+          password: formData.password,
+          refreshToken,
+        };
+        headers.Authorization = `Bearer ${accessToken}`;
+      } else {
+        throw new Error("No valid reset token found in URL");
       }
 
       const response = await fetch("/auth/confirm-reset-password", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({
-          password: formData.password,
-          refreshToken,
-        }),
+        headers,
+        body: JSON.stringify(requestBody),
       });
 
       const data = await response.json();
