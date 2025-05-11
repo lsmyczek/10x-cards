@@ -23,6 +23,9 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       );
     }
 
+    // Get the site URL from environment variables, fallback to request origin for development
+    const siteUrl = import.meta.env.SITE_URL || new URL(request.url).origin;
+
     const supabase = createSupabaseServer({
       cookies,
       headers: request.headers,
@@ -32,7 +35,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       email: result.data.email,
       password: result.data.password,
       options: {
-        emailRedirectTo: `${new URL(request.url).origin}/auth/callback`,
+        emailRedirectTo: `${siteUrl}/auth/callback`,
       },
     });
 
