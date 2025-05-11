@@ -88,58 +88,37 @@ export function ConfirmResetPasswordForm() {
         method: "POST",
         headers,
         body: JSON.stringify(requestBody),
-        redirect: "manual", // Don't automatically follow redirects
       });
 
-      // Handle redirect response
-      if (response.status === 302 || response.status === 301) {
-        const redirectUrl = response.headers.get("location");
-        if (redirectUrl) {
-          setFormState({
-            status: "success",
-            message: "Password reset successfully. Redirecting...",
-          });
-          
-          // Clear form
-          setFormData({ password: "", confirmPassword: "" });
-          
-          // Redirect after a short delay
-          setTimeout(() => {
-            window.location.href = redirectUrl;
-          }, 2000);
-          return;
+      const contentType = response.headers.get("content-type");
+      
+      // Always try to parse the response as JSON first
+      try {
+        const data = await response.json();
+        
+        if (!response.ok) {
+          console.error("Password reset error:", data);
+          throw new Error(data.error || data.details || "Failed to reset password");
         }
+
+        // Handle successful response
+        setFormState({
+          status: "success",
+          message: data.message || "Password reset successfully. Redirecting to login...",
+        });
+
+        // Clear form
+        setFormData({ password: "", confirmPassword: "" });
+
+        // Redirect after a short delay
+        setTimeout(() => {
+          window.location.href = data.redirect || "/auth/sign-in";
+        }, 2000);
+        
+      } catch (e) {
+        console.error("Error processing response:", e);
+        throw new Error("Failed to process server response");
       }
-
-      // For non-redirect responses, try to parse JSON if there's content
-      if (!response.ok) {
-        let errorMessage = "Failed to reset password";
-        const contentType = response.headers.get("content-type");
-        if (contentType?.includes("application/json")) {
-          try {
-            const data = await response.json();
-            console.error("Password reset error details:", data);
-            errorMessage = data.error || data.details || errorMessage;
-          } catch (e) {
-            console.error("Failed to parse error response:", e);
-          }
-        }
-        throw new Error(errorMessage);
-      }
-
-      // If we get here, it's a successful non-redirect response
-      setFormState({
-        status: "success",
-        message: "Password reset successfully. Redirecting to login...",
-      });
-
-      // Clear form
-      setFormData({ password: "", confirmPassword: "" });
-
-      // Redirect to sign-in after a short delay
-      setTimeout(() => {
-        window.location.href = "/auth/sign-in";
-      }, 2000);
     } catch (error) {
       setFormState({
         status: "error",

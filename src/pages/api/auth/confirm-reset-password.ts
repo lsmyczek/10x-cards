@@ -148,8 +148,21 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
       timestamp: new Date().toISOString(),
     });
 
-    // Return a redirect response
-    return redirect("/auth/sign-in", 302);
+    // Return a JSON response with redirect information
+    return new Response(
+      JSON.stringify({
+        success: true,
+        message: "Password reset successful",
+        redirect: "/auth/sign-in"
+      }),
+      {
+        status: 200,
+        headers: {
+          ...securityHeaders,
+          "Cache-Control": "no-store, max-age=0",
+        }
+      }
+    );
   } catch (error) {
     console.error("Unexpected error during password reset confirmation:", {
       error: error instanceof Error ? error.message : "Unknown error",
