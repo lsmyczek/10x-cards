@@ -24,10 +24,11 @@ export const GET: APIRoute = async ({ url, cookies, request, redirect }) => {
     // If this was an email confirmation (signup), redirect to the confirmation page
     if (type === "signup") {
       return redirect("/auth/signup-confirmed");
+    } else {
+      // For other auth actions (password reset, magic link, etc), redirect to dashboard
+      return redirect("/dashboard");
     }
-
-    // For other auth actions (password reset, magic link, etc), redirect to dashboard
-    return redirect("/dashboard");
+    
   } catch (error) {
     console.error("Auth callback error:", error);
     return redirect("/auth/sign-in?error=auth-failed");
