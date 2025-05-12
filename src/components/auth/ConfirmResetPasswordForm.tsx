@@ -6,9 +6,10 @@ import { Loader2 } from "lucide-react";
 import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
 
+// Use PUBLIC_ prefixed env variables for client-side code
 const supabase = createClient(
-  import.meta.env.SUPABASE_URL,
-  import.meta.env.SUPABASE_KEY
+  import.meta.env.PUBLIC_SUPABASE_URL,
+  import.meta.env.PUBLIC_SUPABASE_KEY
 );
 
 const confirmResetSchema = z
