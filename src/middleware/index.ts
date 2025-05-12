@@ -16,6 +16,8 @@ const PUBLIC_PATHS = [
   "/api/auth/register",
   "/api/auth/reset-password",
   "/api/auth/delete",
+  "/api/auth/verify-reset-token",
+  "/api/auth/update-password",
   // Auth callback
   "/auth/callback",
 ];

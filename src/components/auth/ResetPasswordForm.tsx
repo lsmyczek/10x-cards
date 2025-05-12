@@ -2,17 +2,17 @@ import { useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Alert, AlertDescription } from "../ui/alert";
-import { Loader2, MailCheck } from "lucide-react";
+import { Loader2, MailCheck, MailX } from "lucide-react";
 import { z } from "zod";
 
 const resetPasswordSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
 });
 
-type FormState = {
+interface FormState {
   status: "idle" | "submitting" | "success" | "error";
   message?: string;
-};
+}
 
 export function ResetPasswordForm() {
   const [email, setEmail] = useState("");
@@ -67,8 +67,17 @@ export function ResetPasswordForm() {
         <Alert variant={formState.status === "success" ? "success" : "destructive"}>
           <AlertDescription>
             <div className="flex items-center gap-3 text-xl font-bold mb-4">
-              <MailCheck className="h-6 w-6 text-green-500" />
-              Mail sent
+              {formState.status === "success" ? (
+                <>
+                  <MailCheck className="h-6 w-6 text-green-500" />
+                  Mail sent
+                </>
+              ) : (
+                <>
+                  <MailX className="h-6 w-6 text-red-500" />
+                  Mail not sent
+                </>
+              )}
             </div>
             <p>{formState.message}</p>
           </AlertDescription>

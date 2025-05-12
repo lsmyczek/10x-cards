@@ -28,7 +28,6 @@ export const GET: APIRoute = async ({ url, cookies, request, redirect }) => {
       // For other auth actions (password reset, magic link, etc), redirect to dashboard
       return redirect("/sign-in");
     }
-    
   } catch (error) {
     console.error("Auth callback error:", error);
     return redirect("/auth/sign-in?error=auth-failed");

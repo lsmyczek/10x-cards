@@ -1,4 +1,4 @@
-name: Build and Test Main Branch
+name: Test Main Branch
 
 on:
   # push:

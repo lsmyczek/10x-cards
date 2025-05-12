@@ -115,7 +115,7 @@ export function SignInForm() {
       </Button>
       <div className="flex justify-center items-center mt-2">
         <a href="/auth/sign-up" className="text-sm  hover:underline">
-          Don't have an account? - Sign Up
+          Don&apos;t have an account? - Sign Up
         </a>
       </div>
     </form>

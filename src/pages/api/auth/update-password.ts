@@ -1,24 +1,25 @@
 import type { APIRoute } from "astro";
-import { createSupabaseServer } from "../../../db/supabase.server";
 import { z } from "zod";
 
 /**
  * Schema for password reset confirmation request validation
  */
-const confirmResetSchema = z.object({
-  password: z
-    .string()
-    .min(6, "Password must be at least 6 characters")
-    .max(72, "Password must be less than 72 characters")
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/,
-      "Password must contain at least one uppercase letter, one lowercase letter, and one number"
-    ),
-  code: z.string().optional(),
-  refreshToken: z.string().optional(),
-}).refine((data) => data.code || data.refreshToken, {
-  message: "Either code or refreshToken must be provided",
-});
+const confirmResetSchema = z
+  .object({
+    password: z
+      .string()
+      .min(6, "Password must be at least 6 characters")
+      .max(72, "Password must be less than 72 characters")
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/,
+        "Password must contain at least one uppercase letter, one lowercase letter, and one number"
+      ),
+    code: z.string().optional(),
+    refreshToken: z.string().optional(),
+  })
+  .refine((data) => data.code || data.refreshToken, {
+    message: "Either code or refreshToken must be provided",
+  });
 
 /**
  * Security headers for the password reset confirmation endpoint
@@ -29,9 +30,6 @@ const securityHeaders = {
   "X-Frame-Options": "DENY",
   "Referrer-Policy": "strict-origin-when-cross-origin",
   "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
 
 export const prerender = false;
@@ -50,24 +48,12 @@ export const prerender = false;
  * @param {string} [request.body.refreshToken] - Legacy refresh token
  * @returns {Response} JSON response indicating success or failure
  */
-export const POST: APIRoute = async ({ request, cookies, redirect }) => {
-  console.log("Received password reset request");
-  console.log("Request headers:", Object.fromEntries(request.headers.entries()));
-
-  // Handle preflight requests
-  if (request.method === "OPTIONS") {
-    return new Response(null, {
-      status: 204,
-      headers: securityHeaders,
-    });
-  }
-
+export const POST: APIRoute = async ({ request, locals }) => {
   try {
     // Parse and validate request body
     const body = await request.json();
-    console.log("Request body:", body);
-
     const result = confirmResetSchema.safeParse(body);
+    console.log("result", result);
 
     if (!result.success) {
       console.warn("Invalid password reset confirmation request:", {
@@ -88,42 +74,63 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
     }
 
     const { password, code, refreshToken } = result.data;
+    console.log("code", code, "refreshToken", refreshToken, "password", password);
 
     // Initialize Supabase client
-    const supabase = createSupabaseServer({
-      cookies,
-      headers: request.headers,
-    });
+    const supabase = locals.supabase;
 
     let error;
 
     if (code) {
-      // Exchange the recovery code for a session
-      const { data: sessionData, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
-      error = exchangeError;
+      // For new format, use resetPasswordForEmail with the recovery token
+      const { data, error: updateError } = await supabase.auth.updateUser(
+        {
+          password,
+        },
+        {
+          emailRedirectTo: new URL(request.url).origin + "/auth/sign-in",
+        }
+      );
+      error = updateError;
 
-      if (!error && sessionData?.session) {
-        // Create a new client with the session
-        const authenticatedSupabase = createSupabaseServer({
-          cookies,
-          headers: new Headers({
-            Authorization: `Bearer ${sessionData.session.access_token}`,
+      if (!error && data?.user) {
+        return new Response(
+          JSON.stringify({
+            success: true,
+            message: "Password updated successfully",
+            redirect: "/auth/sign-in",
           }),
-        });
-
-        // Update the password with the authenticated client
-        const { error: updateError } = await authenticatedSupabase.auth.updateUser({ password });
-        error = updateError;
+          {
+            status: 200,
+            headers: securityHeaders,
+          }
+        );
       }
     } else if (refreshToken) {
       // Legacy format: First verify the refresh token
-      const { data: sessionData, error: verifyError } = await supabase.auth.refreshSession({ refresh_token: refreshToken });
+      const { data: sessionData, error: verifyError } = await supabase.auth.refreshSession({
+        refresh_token: refreshToken,
+      });
       error = verifyError;
 
       if (!error && sessionData?.session) {
         // If refresh token is valid, update the password
         const { error: updateError } = await supabase.auth.updateUser({ password });
         error = updateError;
+
+        if (!error) {
+          return new Response(
+            JSON.stringify({
+              success: true,
+              message: "Password updated successfully",
+              redirect: "/auth/sign-in",
+            }),
+            {
+              status: 200,
+              headers: securityHeaders,
+            }
+          );
+        }
       }
     } else {
       error = new Error("No valid reset token provided");
@@ -140,7 +147,7 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
         JSON.stringify({
           error: error.message || "Failed to reset password",
           details: error.message,
-          code: error.name || "RESET_ERROR"
+          code: error.name || "RESET_ERROR",
         }),
         {
           status: 400,
@@ -149,12 +156,17 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
       );
     }
 
-    console.info("Password reset completed successfully", {
-      timestamp: new Date().toISOString(),
-    });
-
-    // Return a redirect response with proper headers
-    return redirect("/auth/sign-in", 302);
+    // If we get here, something unexpected happened
+    return new Response(
+      JSON.stringify({
+        error: "Unexpected error during password reset",
+        success: false,
+      }),
+      {
+        status: 500,
+        headers: securityHeaders,
+      }
+    );
   } catch (error) {
     console.error("Unexpected error during password reset confirmation:", {
       error: error instanceof Error ? error.message : "Unknown error",
@@ -163,16 +175,13 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
     });
 
     return new Response(
-      JSON.stringify({ 
+      JSON.stringify({
         error: "Internal server error",
-        success: false 
-      }), 
+        success: false,
+      }),
       {
         status: 500,
-        headers: {
-          ...securityHeaders,
-          "Content-Type": "application/json"
-        }
+        headers: securityHeaders,
       }
     );
   }
