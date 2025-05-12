@@ -4,6 +4,12 @@ import { Input } from "../ui/input";
 import { Alert, AlertDescription } from "../ui/alert";
 import { Loader2 } from "lucide-react";
 import { z } from "zod";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  import.meta.env.SUPABASE_URL,
+  import.meta.env.SUPABASE_KEY
+);
 
 const confirmResetSchema = z
   .object({
@@ -50,115 +56,57 @@ export function ConfirmResetPasswordForm() {
     setFormState({ status: "submitting" });
 
     try {
-      // First try to get the code from query parameters
+      // Get the code from query parameters
       const queryParams = new URLSearchParams(window.location.search);
       const code = queryParams.get("code");
 
-      // If no code in query params, try hash params (legacy format)
-      const hashParams = new URLSearchParams(window.location.hash.slice(1));
-      const accessToken = hashParams.get("access_token");
-      const refreshToken = hashParams.get("refresh_token");
-      const type = hashParams.get("type");
-
-      // Determine which format we're dealing with
-      let requestBody;
-      let headers: HeadersInit = {
-        "Content-Type": "application/json",
-      };
-
-      if (code) {
-        requestBody = {
-          password: formData.password,
-          code,
-        };
-      } else if (accessToken && refreshToken && type === "recovery") {
-        requestBody = {
-          password: formData.password,
-          refreshToken,
-        };
-        headers = {
-          ...headers,
-          Authorization: `Bearer ${accessToken}`,
-        };
-      } else {
-        throw new Error("No valid reset token found in URL");
+      if (!code) {
+        throw new Error("No reset code found in URL");
       }
 
-      // Get the current origin
-      const origin = window.location.origin;
-      const apiUrl = `${origin}/api/auth/confirm-reset-password`;
+      console.log("Attempting password reset with code");
 
-      console.log("Sending request to:", apiUrl);
-      console.log("Request headers:", headers);
-      console.log("Request body:", requestBody);
+      // First exchange the code for a session
+      const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+      
+      if (exchangeError) {
+        console.error("Error exchanging code for session:", exchangeError);
+        throw new Error(exchangeError.message);
+      }
 
-      const response = await fetch(apiUrl, {
-        method: "POST",
-        headers,
-        body: JSON.stringify(requestBody),
-        // Prevent automatic redirects
-        redirect: "manual"
+      console.log("Successfully exchanged code for session");
+
+      // Now update the password
+      const { error: updateError } = await supabase.auth.updateUser({
+        password: formData.password
       });
 
-      console.log("Response status:", response.status);
-      console.log("Response headers:", Object.fromEntries(response.headers.entries()));
-
-      // Check if we got a redirect or success
-      if (response.status === 302 || response.status === 301 || response.status === 200) {
-        // Try to get redirect URL from either location header or response body
-        let redirectUrl = response.headers.get("location");
-
-        // If no location header, try to parse response as JSON
-        if (!redirectUrl && response.headers.get("content-type")?.includes("application/json")) {
-          try {
-            const data = await response.json();
-            redirectUrl = data.redirect;
-          } catch (e) {
-            console.log("Not a JSON response, using default redirect");
-          }
-        }
-
-        // Default to sign-in page if no redirect URL found
-        redirectUrl = redirectUrl || "/auth/sign-in";
-
-        setFormState({
-          status: "success",
-          message: "Password reset successfully. Redirecting...",
-        });
-        
-        // Clear form
-        setFormData({ password: "", confirmPassword: "" });
-        
-        // Redirect after a short delay
-        setTimeout(() => {
-          window.location.href = redirectUrl;
-        }, 2000);
-        return;
+      if (updateError) {
+        console.error("Error updating password:", updateError);
+        throw new Error(updateError.message);
       }
 
-      // Handle error responses
-      if (!response.ok) {
-        let errorMessage = "Failed to reset password";
-        
-        // Try to parse error message from JSON response
-        if (response.headers.get("content-type")?.includes("application/json")) {
-          try {
-            const data = await response.json();
-            errorMessage = data.error || data.details || errorMessage;
-          } catch (e) {
-            console.error("Error parsing error response:", e);
-          }
-        }
-        
-        throw new Error(errorMessage);
-      }
+      console.log("Successfully updated password");
 
-      // If we get here without a redirect or error, something unexpected happened
-      throw new Error("Unexpected server response");
+      // Handle success
+      setFormState({
+        status: "success",
+        message: "Password reset successfully. Redirecting to login...",
+      });
+
+      // Clear form
+      setFormData({ password: "", confirmPassword: "" });
+
+      // Redirect to sign-in after a short delay
+      setTimeout(() => {
+        window.location.href = "/auth/sign-in";
+      }, 2000);
+
     } catch (error) {
+      console.error("Password reset error:", error);
       setFormState({
         status: "error",
-        message: error instanceof Error ? error.message : "An error occurred",
+        message: error instanceof Error ? error.message : "Failed to reset password",
       });
     }
   };
