@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { z } from "zod";
+import { createSupabaseServer } from "../../../db/supabase.server";
 
 /**
  * Schema for password reset confirmation request validation
@@ -48,7 +49,7 @@ export const prerender = false;
  * @param {string} [request.body.refreshToken] - Legacy refresh token
  * @returns {Response} JSON response indicating success or failure
  */
-export const POST: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async ({ request, cookies }) => {
   try {
     // Parse and validate request body
     const body = await request.json();
@@ -73,49 +74,28 @@ export const POST: APIRoute = async ({ request, locals }) => {
       );
     }
 
-    const { password, code, refreshToken } = result.data;
-    console.log("code", code, "refreshToken", refreshToken, "password", password);
+    const { password, code } = result.data;
+    console.log("code", code, "password", password);
 
     // Initialize Supabase client
-    const supabase = locals.supabase;
+    const supabase = createSupabaseServer({
+      headers: request.headers,
+      cookies,
+    });
 
     let error;
 
     if (code) {
       // For new format, use resetPasswordForEmail with the recovery token
-      const { data, error: updateError } = await supabase.auth.updateUser(
-        {
+      const { data, error: resetError } = await supabase.auth.exchangeCodeForSession(code);
+      
+      if (resetError) {
+        error = resetError;
+      } else if (data?.session) {
+        // If we got a session, update the password
+        const { error: updateError } = await supabase.auth.updateUser({
           password,
-        },
-        {
-          emailRedirectTo: new URL(request.url).origin + "/auth/sign-in",
-        }
-      );
-      error = updateError;
-
-      if (!error && data?.user) {
-        return new Response(
-          JSON.stringify({
-            success: true,
-            message: "Password updated successfully",
-            redirect: "/auth/sign-in",
-          }),
-          {
-            status: 200,
-            headers: securityHeaders,
-          }
-        );
-      }
-    } else if (refreshToken) {
-      // Legacy format: First verify the refresh token
-      const { data: sessionData, error: verifyError } = await supabase.auth.refreshSession({
-        refresh_token: refreshToken,
-      });
-      error = verifyError;
-
-      if (!error && sessionData?.session) {
-        // If refresh token is valid, update the password
-        const { error: updateError } = await supabase.auth.updateUser({ password });
+        });
         error = updateError;
 
         if (!error) {
@@ -131,9 +111,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
             }
           );
         }
+      } else {
+        error = new Error("Failed to exchange code for session");
       }
-    } else {
-      error = new Error("No valid reset token provided");
     }
 
     if (error) {
